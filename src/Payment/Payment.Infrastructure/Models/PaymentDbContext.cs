@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Payment.Domain.Entities;
 
 namespace Payment.Infrastructure.Models;
 
@@ -13,17 +14,19 @@ public partial class PaymentDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Payment> Payments { get; set; }
+    public virtual DbSet<Payment.Domain.Entities.Payment> Payments { get; set; }
 
     public virtual DbSet<PaymentEvent> PaymentEvents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Payment>(entity =>
+        modelBuilder.Entity<Payment.Domain.Entities.Payment>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Payments__3214EC073BD8C176");
 
             entity.ToTable("Payments", "payment");
+
+            entity.HasIndex(e => e.OrderId, "IX_Payments_OrderId");
 
             entity.Property(e => e.Id).HasDefaultValueSql("(newsequentialid())");
             entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");

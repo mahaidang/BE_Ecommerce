@@ -1,54 +1,62 @@
-﻿using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
-using ProductService.Application.Interfaces;
-using ProductService.Infrastructure.Repositories;
+﻿using BasketService.Application.Interfaces;
+using BasketService.Infrastructure;
+using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(o =>
+{
+    o.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket API", Version = "v1" });
+});
 
-// Mongo config
-var mongoCfg = builder.Configuration.GetSection("Mongo");
-var connStr = mongoCfg.GetValue<string>("ConnectionString")!;
-var dbName = mongoCfg.GetValue<string>("Database")!;
+builder.Services.AddHttpClient("ProductApi", (sp, c) =>
+{
+    var cfg = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = cfg["Services:ProductBaseUrl"]!;
+    c.BaseAddress = new Uri(baseUrl);
+    c.Timeout = TimeSpan.FromSeconds(5);
+});
 
-// Mongo DI
-builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connStr));
-builder.Services.AddSingleton(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(dbName));
 
+// Redis
+var redisConn = builder.Configuration["Redis:ConnectionString"]!;
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConn));
 
-// Đăng ký repository
-builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+// Repo
+builder.Services.AddSingleton<IBasketRepository, RedisBasketRepository>();
 
 var app = builder.Build();
 
-app.UseSwagger(c =>
+if (app.Environment.IsDevelopment())
 {
-    c.PreSerializeFilters.Add((doc, req) =>
+    app.UseSwagger(c =>
     {
-        // Detect nếu request đến từ Gateway (qua port 5000)
-        var isViaGateway = req.Host.Port == 5000 ||
-                          req.Headers.ContainsKey("X-Forwarded-Prefix") ||
-                          req.Headers["Referer"].ToString().Contains(":5000");
-
-        if (isViaGateway)
+        c.PreSerializeFilters.Add((doc, req) =>
         {
-            // Force URL qua Gateway
-            doc.Servers = new List<OpenApiServer>
+            // Detect nếu request đến từ Gateway (qua port 5000)
+            var isViaGateway = req.Host.Port == 5000 ||
+                              req.Headers.ContainsKey("X-Forwarded-Prefix") ||
+                              req.Headers["Referer"].ToString().Contains(":5000");
+
+            if (isViaGateway)
+            {
+                // Force URL qua Gateway
+                doc.Servers = new List<OpenApiServer>
             {
                 new OpenApiServer
                 {
-                    Url = "http://localhost:5000/api/product",
+                    Url = "http://localhost:5000/api/basket",
                     Description = "Via Gateway"
                 }
             };
-        }
-        else
-        {
-            // Chạy trực tiếp service
-            doc.Servers = new List<OpenApiServer>
+            }
+            else
+            {
+                // Chạy trực tiếp service
+                doc.Servers = new List<OpenApiServer>
             {
                 new OpenApiServer
                 {
@@ -56,98 +64,59 @@ app.UseSwagger(c =>
                     Description = "Direct Access"
                 }
             };
-        }
+            }
+        });
     });
-});
+    app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
-
-#region crud
-//// CREATE
-//app.MapPost("/api/products", async (ProductCreateDto dto, IProductRepository repo) =>
+app.MapControllers();
+#region BasketService.Api/Program.cs (DEV ONLY)
+//app.MapGet("/bench/redis", async (StackExchange.Redis.IConnectionMultiplexer mux) =>
 //{
-//    var p = new Product
+//    var db = mux.GetDatabase();
+//    var key = "bench:key";
+//    var payload = new string('x', 256);
+
+//    var sw = System.Diagnostics.Stopwatch.StartNew();
+//    const int N = 10_000;
+
+//    // SET tuần tự
+//    for (int i = 0; i < N; i++) await db.StringSetAsync($"{key}:{i}", payload);
+//    sw.Stop();
+//    var setMs = sw.ElapsedMilliseconds;
+
+//    // GET tuần tự
+//    sw.Restart();
+//    for (int i = 0; i < N; i++) _ = await db.StringGetAsync($"{key}:{i}");
+//    sw.Stop();
+//    var getMs = sw.ElapsedMilliseconds;
+
+//    // GET song song (throttle 100)
+//    sw.Restart();
+//    var throttler = new System.Threading.SemaphoreSlim(100);
+//    var tasks = Enumerable.Range(0, N).Select(async i => {
+//        await throttler.WaitAsync();
+//        try { _ = await db.StringGetAsync($"{key}:{i}"); }
+//        finally { throttler.Release(); }
+//    });
+//    await Task.WhenAll(tasks);
+//    sw.Stop();
+//    var getParMs = sw.ElapsedMilliseconds;
+
+//    return Results.Ok(new
 //    {
-//        Sku = dto.Sku.Trim(),
-//        Name = dto.Name.Trim(),
-//        Slug = dto.Slug.Trim().ToLowerInvariant(),
-//        CategoryId = dto.CategoryId,
-//        Price = dto.Price,
-//        Currency = dto.Currency.Trim().ToUpperInvariant(),
-//        IsActive = dto.IsActive
-//    };
-
-//    try
-//    {
-//        await repo.AddAsync(p);
-//        return Results.Created($"/api/products/{p.Id}", p);
-//    }
-//    catch (MongoWriteException mwe) when (mwe.WriteError.Category == ServerErrorCategory.DuplicateKey)
-//    {
-//        return Results.Conflict("Sku or Slug already exists");
-//    }
-//});
-
-//// READ by id
-//app.MapGet("/api/products/{id:guid}", async (Guid id, IProductRepository repo) =>
-//{
-//    var p = await repo.GetByIdAsync(id);
-//    return p is null ? Results.NotFound() : Results.Ok(p);
-//});
-
-//// LIST + filter + paging
-//app.MapGet("/api/products", async (
-//    string? q, Guid? categoryId, decimal? minPrice, decimal? maxPrice,
-//    int page, int pageSize, IProductRepository repo) =>
-//{
-//    page = page <= 0 ? 1 : page;
-//    pageSize = pageSize is <= 0 or > 200 ? 20 : pageSize;
-
-//    var (items, total) = await repo.QueryAsync(q, categoryId, minPrice, maxPrice, page, pageSize);
-//    return Results.Ok(new { total, page, pageSize, items });
-//});
-
-//// UPDATE
-//app.MapPut("/api/products/{id:guid}", async (Guid id, ProductUpdateDto dto, IProductRepository repo) =>
-//{
-//    var existing = await repo.GetByIdAsync(id);
-//    if (existing is null) return Results.NotFound();
-
-//    existing.Sku = dto.Sku.Trim();
-//    existing.Name = dto.Name.Trim();
-//    existing.Slug = dto.Slug.Trim().ToLowerInvariant();
-//    existing.CategoryId = dto.CategoryId;
-//    existing.Price = dto.Price;
-//    existing.Currency = dto.Currency.Trim().ToUpperInvariant();
-//    existing.IsActive = dto.IsActive;
-
-//    try
-//    {
-//        await repo.UpdateAsync(existing);
-//        return Results.Ok(existing);
-//    }
-//    catch (MongoWriteException mwe) when (mwe.WriteError.Category == ServerErrorCategory.DuplicateKey)
-//    {
-//        return Results.Conflict("Sku or Slug already exists");
-//    }
-//});
-
-//// DELETE
-//app.MapDelete("/api/products/{id:guid}", async (Guid id, IProductRepository repo) =>
-//{
-//    try
-//    {
-//        await repo.DeleteAsync(id);
-//        return Results.NoContent();
-//    }
-//    catch (KeyNotFoundException)
-//    {
-//        return Results.NotFound();
-//    }
+//        notes = "DEV benchmark only – do not run in production",
+//        N,
+//        set_ms = setMs,
+//        set_req_per_sec = (int)(N / (setMs / 1000.0)),
+//        get_ms = getMs,
+//        get_req_per_sec = (int)(N / (getMs / 1000.0)),
+//        get_parallel_ms = getParMs,
+//        get_parallel_req_per_sec = (int)(N / (getParMs / 1000.0))
+//    });
 //});
 #endregion
-
-app.MapControllers();
-
 
 app.Run();

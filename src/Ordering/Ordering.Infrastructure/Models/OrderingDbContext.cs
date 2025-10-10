@@ -99,3 +99,4 @@ public partial class OrderingDbContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
+

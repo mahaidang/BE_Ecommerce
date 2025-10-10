@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Payment.Infrastructure.Models;
+namespace Payment.Domain.Entities;
 
 public partial class PaymentEvent
 {
