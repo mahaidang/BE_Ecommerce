@@ -1,0 +1,21 @@
+﻿syntax = "proto3";
+option csharp_namespace = "InventoryService.Grpc";
+
+package inventory;
+
+// Kiểm tra tồn khả dụng (Quantity - ReservedQty)
+message CheckStockRequest {
+  string productId = 1;   // Guid dạng string
+  string warehouseId = 2; // optional (Guid); nếu rỗng => tổng tất cả kho
+  int32  quantity = 3;    // cần kiểm tra (>=1)
+}
+
+message CheckStockResponse {
+  bool  available = 1;    // true nếu đủ tồn khả dụng
+  int32 availableQty = 2; // tổng (quantity - reserved) theo phạm vi
+  string message = 3;     // mô tả ngắn
+}
+
+service Inventory {
+  rpc CheckStock (CheckStockRequest) returns (CheckStockResponse);
+}
