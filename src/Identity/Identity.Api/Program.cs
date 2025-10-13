@@ -1,17 +1,23 @@
-﻿using Identity.Application.Auth;
-using Identity.Application.Common;
-using Identity.Infrastructure.Models;
+﻿using FluentValidation;
+using Identity.Application.Abstractions;
+using Identity.Application.Abstractions.Persistence;
+using Identity.Application.Abstractions.Security;
+using Identity.Application.Common.Behaviors;
+using Identity.Application.Features.Commands.Auth;
+using Identity.Application.Features.Users.Commands.Register;
+using Identity.Infrastructure.Persistence;
+using Identity.Infrastructure.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
 
 // OpenAPI + Swagger UI
 builder.Services.AddEndpointsApiExplorer();
@@ -67,51 +73,63 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<IdentityDbContext>());
+
+builder.Services.AddValidatorsFromAssembly(typeof(RegisterValidator).Assembly);
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
-app.UseSwagger(c =>
+if (app.Environment.IsDevelopment())
 {
-    c.PreSerializeFilters.Add((doc, req) =>
+    app.UseSwagger(c =>
     {
-        // Detect nếu request đến từ Gateway (qua port 5000)
-        var isViaGateway = req.Host.Port == 5000 ||
-                          req.Headers.ContainsKey("X-Forwarded-Prefix") ||
-                          req.Headers["Referer"].ToString().Contains(":5000");
+        c.PreSerializeFilters.Add((doc, req) =>
+        {
+            var isViaGateway = req.Host.Port == 5000 ||
+                               req.Headers.ContainsKey("X-Forwarded-Prefix") ||
+                               req.Headers["Referer"].ToString().Contains(":5000");
 
-        if (isViaGateway)
-        {
-            // Force URL qua Gateway
-            doc.Servers = new List<OpenApiServer>
+            if (isViaGateway)
             {
-                new OpenApiServer
+                doc.Servers = new List<OpenApiServer>
                 {
-                    Url = "http://localhost:5000/api/identity",
-                    Description = "Via Gateway"
-                }
-            };
-        }
-        else
-        {
-            // Chạy trực tiếp service
-            doc.Servers = new List<OpenApiServer>
+                    new OpenApiServer
+                    {
+                        Url = "http://localhost:5000/api/identity",
+                        Description = "Via Gateway"
+                    }
+                };
+            }
+            else
             {
-                new OpenApiServer
+                doc.Servers = new List<OpenApiServer>
                 {
-                    Url = $"{req.Scheme}://{req.Host.Value}",
-                    Description = "Direct Access"
-                }
-            };
-        }
+                    new OpenApiServer
+                    {
+                        Url = $"{req.Scheme}://{req.Host.Value}",
+                        Description = "Direct Access"
+                    }
+                };
+            }
+        });
     });
-});
+
+    app.UseSwaggerUI();
+}
 
 
-app.UseSwaggerUI(c =>
-{
-    // DÙNG ĐƯỜNG DẪN TƯƠNG ĐỐI để chạy được cả qua Gateway lẫn trực tiếp 5101
-    c.SwaggerEndpoint("v1/swagger.json", "Identity API v1");
-    c.RoutePrefix = "swagger";
-});
 
 //app.UseHttpsRedirection();
 app.UseAuthentication();
@@ -119,56 +137,7 @@ app.UseAuthorization();
 
 app.MapGet("/health", () => Results.Ok("OK"));
 
-// ---------- API qua MediatR ----------
-app.MapPost("/auth/register",
-    async (RegisterCommand cmd, IMediator mediator)
-        => Results.Ok(await mediator.Send(cmd)));
 
-app.MapPost("/auth/login",
-    async (LoginCommand cmd, IMediator mediator) =>
-    {
-        var res = await mediator.Send(cmd);
-
-        // tạo JWT ở API layer (Application chỉ trả LoginResult)
-        var claims = new[]
-        {
-        new Claim(JwtRegisteredClaimNames.Sub, res.UserId.ToString()),
-        new Claim(JwtRegisteredClaimNames.UniqueName, res.Username),
-        new Claim(JwtRegisteredClaimNames.Email, res.Email),
-        new Claim(ClaimTypes.NameIdentifier, res.UserId.ToString()),
-        new Claim(ClaimTypes.Name, res.Username)
-    };
-
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var token = new JwtSecurityToken(
-            issuer: jwt["Issuer"],
-            audience: jwt["Audience"],
-            claims: claims,
-            notBefore: DateTime.UtcNow,
-            expires: DateTime.UtcNow.AddHours(2),
-            signingCredentials: creds);
-
-        var jwtString = new JwtSecurityTokenHandler().WriteToken(token);
-
-        return Results.Ok(new
-        {
-            res.UserId,
-            res.Username,
-            res.Email,
-            accessToken = jwtString,
-            tokenType = "Bearer",
-            expiresIn = 7200
-        });
-    });
-
-// endpoint test token
-app.MapGet("/me", (ClaimsPrincipal user) =>
-{
-    var sub = user.FindFirstValue(ClaimTypes.NameIdentifier) ?? user.FindFirstValue(JwtRegisteredClaimNames.Sub);
-    var name = user.Identity?.Name ?? user.FindFirstValue(JwtRegisteredClaimNames.UniqueName);
-    var email = user.FindFirstValue(JwtRegisteredClaimNames.Email);
-    return Results.Ok(new { userId = sub, username = name, email });
-})
-.RequireAuthorization();
+app.MapControllers();
 
 app.Run();

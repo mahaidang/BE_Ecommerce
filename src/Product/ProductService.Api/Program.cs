@@ -1,7 +1,12 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
-using ProductService.Application.Interfaces;
+using ProductService.Application.Abstractions.Persistence;
+using ProductService.Application.Common.Behaviors;
+using ProductService.Application.Features.Commands.CreateProduct;
 using ProductService.Infrastructure.Repositories;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +26,14 @@ builder.Services.AddSingleton(sp => sp.GetRequiredService<IMongoClient>().GetDat
 
 // Đăng ký repository
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+
+//Mediator
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(CreateProductHandler).Assembly));
+
+builder.Services.AddValidatorsFromAssembly(typeof(CreateProductValidator).Assembly);
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 var app = builder.Build();
 
@@ -60,92 +73,11 @@ app.UseSwagger(c =>
     });
 });
 
+app.UseSwaggerUI();
+
 app.UseHttpsRedirection();
 
-#region crud
-//// CREATE
-//app.MapPost("/api/products", async (ProductCreateDto dto, IProductRepository repo) =>
-//{
-//    var p = new Product
-//    {
-//        Sku = dto.Sku.Trim(),
-//        Name = dto.Name.Trim(),
-//        Slug = dto.Slug.Trim().ToLowerInvariant(),
-//        CategoryId = dto.CategoryId,
-//        Price = dto.Price,
-//        Currency = dto.Currency.Trim().ToUpperInvariant(),
-//        IsActive = dto.IsActive
-//    };
-
-//    try
-//    {
-//        await repo.AddAsync(p);
-//        return Results.Created($"/api/products/{p.Id}", p);
-//    }
-//    catch (MongoWriteException mwe) when (mwe.WriteError.Category == ServerErrorCategory.DuplicateKey)
-//    {
-//        return Results.Conflict("Sku or Slug already exists");
-//    }
-//});
-
-//// READ by id
-//app.MapGet("/api/products/{id:guid}", async (Guid id, IProductRepository repo) =>
-//{
-//    var p = await repo.GetByIdAsync(id);
-//    return p is null ? Results.NotFound() : Results.Ok(p);
-//});
-
-//// LIST + filter + paging
-//app.MapGet("/api/products", async (
-//    string? q, Guid? categoryId, decimal? minPrice, decimal? maxPrice,
-//    int page, int pageSize, IProductRepository repo) =>
-//{
-//    page = page <= 0 ? 1 : page;
-//    pageSize = pageSize is <= 0 or > 200 ? 20 : pageSize;
-
-//    var (items, total) = await repo.QueryAsync(q, categoryId, minPrice, maxPrice, page, pageSize);
-//    return Results.Ok(new { total, page, pageSize, items });
-//});
-
-//// UPDATE
-//app.MapPut("/api/products/{id:guid}", async (Guid id, ProductUpdateDto dto, IProductRepository repo) =>
-//{
-//    var existing = await repo.GetByIdAsync(id);
-//    if (existing is null) return Results.NotFound();
-
-//    existing.Sku = dto.Sku.Trim();
-//    existing.Name = dto.Name.Trim();
-//    existing.Slug = dto.Slug.Trim().ToLowerInvariant();
-//    existing.CategoryId = dto.CategoryId;
-//    existing.Price = dto.Price;
-//    existing.Currency = dto.Currency.Trim().ToUpperInvariant();
-//    existing.IsActive = dto.IsActive;
-
-//    try
-//    {
-//        await repo.UpdateAsync(existing);
-//        return Results.Ok(existing);
-//    }
-//    catch (MongoWriteException mwe) when (mwe.WriteError.Category == ServerErrorCategory.DuplicateKey)
-//    {
-//        return Results.Conflict("Sku or Slug already exists");
-//    }
-//});
-
-//// DELETE
-//app.MapDelete("/api/products/{id:guid}", async (Guid id, IProductRepository repo) =>
-//{
-//    try
-//    {
-//        await repo.DeleteAsync(id);
-//        return Results.NoContent();
-//    }
-//    catch (KeyNotFoundException)
-//    {
-//        return Results.NotFound();
-//    }
-//});
-#endregion
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.MapControllers();
 

@@ -1,10 +1,9 @@
-﻿using BasketService.Application.Interfaces;
-using BasketService.Infrastructure;
+﻿using BasketService.Application.Abstractions.External;
+using BasketService.Application.Features.Baskets.Queries;
+using BasketService.Infrastructure.External;
+using BasketService.Infrastructure.Persistence;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
-using Microsoft.Extensions.DependencyInjection; // Add this using directive
-using Swashbuckle.AspNetCore.SwaggerGen; // Add this using directive
-using Swashbuckle.AspNetCore.SwaggerUI; // Add this using directive
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +28,16 @@ var redisConn = builder.Configuration["Redis:ConnectionString"]!;
 builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConn));
 
 // Repo
-builder.Services.AddSingleton<IBasketRepository, RedisBasketRepository>();
+builder.Services.AddScoped<BasketService.Application.Abstractions.Persistence.IBasketRepository, RedisBasketRepository>();
+
+// Đăng ký MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetBasketHandler>());
+
+builder.Services.AddHttpClient<IProductCatalogClient, ProductCatalogClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:ProductServiceUrl"]);
+});
+
 
 var app = builder.Build();
 
@@ -47,7 +55,7 @@ if (app.Environment.IsDevelopment())
             if (isViaGateway)
             {
                 // Force URL qua Gateway
-                doc.Servers = new List<OpenApiServer>
+            doc.Servers = new List<OpenApiServer>
             {
                 new OpenApiServer
                 {
@@ -60,13 +68,13 @@ if (app.Environment.IsDevelopment())
             {
                 // Chạy trực tiếp service
                 doc.Servers = new List<OpenApiServer>
-            {
-                new OpenApiServer
                 {
-                    Url = $"{req.Scheme}://{req.Host.Value}",
-                    Description = "Direct Access"
-                }
-            };
+                    new OpenApiServer
+                    {
+                        Url = $"{req.Scheme}://{req.Host.Value}",
+                        Description = "Direct Access"
+                    }
+                };
             }
         });
     });
@@ -75,51 +83,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
-#region BasketService.Api/Program.cs (DEV ONLY)
-//app.MapGet("/bench/redis", async (StackExchange.Redis.IConnectionMultiplexer mux) =>
-//{
-//    var db = mux.GetDatabase();
-//    var key = "bench:key";
-//    var payload = new string('x', 256);
 
-//    var sw = System.Diagnostics.Stopwatch.StartNew();
-//    const int N = 10_000;
-
-//    // SET tuần tự
-//    for (int i = 0; i < N; i++) await db.StringSetAsync($"{key}:{i}", payload);
-//    sw.Stop();
-//    var setMs = sw.ElapsedMilliseconds;
-
-//    // GET tuần tự
-//    sw.Restart();
-//    for (int i = 0; i < N; i++) _ = await db.StringGetAsync($"{key}:{i}");
-//    sw.Stop();
-//    var getMs = sw.ElapsedMilliseconds;
-
-//    // GET song song (throttle 100)
-//    sw.Restart();
-//    var throttler = new System.Threading.SemaphoreSlim(100);
-//    var tasks = Enumerable.Range(0, N).Select(async i => {
-//        await throttler.WaitAsync();
-//        try { _ = await db.StringGetAsync($"{key}:{i}"); }
-//        finally { throttler.Release(); }
-//    });
-//    await Task.WhenAll(tasks);
-//    sw.Stop();
-//    var getParMs = sw.ElapsedMilliseconds;
-
-//    return Results.Ok(new
-//    {
-//        notes = "DEV benchmark only – do not run in production",
-//        N,
-//        set_ms = setMs,
-//        set_req_per_sec = (int)(N / (setMs / 1000.0)),
-//        get_ms = getMs,
-//        get_req_per_sec = (int)(N / (getMs / 1000.0)),
-//        get_parallel_ms = getParMs,
-//        get_parallel_req_per_sec = (int)(N / (getParMs / 1000.0))
-//    });
-//});
-#endregion
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.Run();
