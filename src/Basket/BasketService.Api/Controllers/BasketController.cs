@@ -1,104 +1,72 @@
-﻿// BasketService.Api/Controllers/BasketController.cs
-using BasketService.Api.Models;
-using BasketService.Application.Interfaces;
-using BasketService.Domain.Entities;
+﻿using BasketService.Api.Contracts;
+using BasketService.Application.Features.Baskets.Commands.Delete;
+using BasketService.Application.Features.Baskets.Commands.UpsertItem;
+using BasketService.Application.Features.Baskets.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class BasketController : ControllerBase
 {
-    private readonly IBasketRepository _repo;
+    private readonly ISender _sender;
     private readonly TimeSpan _ttl;
 
-    public BasketController(IBasketRepository repo, IConfiguration cfg)
+    public BasketController(ISender sender, IConfiguration cfg)
     {
-        _repo = repo;
+        _sender = sender;
         var minutes = cfg.GetValue<int?>("Redis:DefaultTtlMinutes") ?? 60;
         _ttl = TimeSpan.FromMinutes(minutes);
     }
 
-    // Xem giỏ
     [HttpGet("{userId:guid}")]
-    public async Task<IActionResult> Get([FromRoute] Guid userId)
-        => Ok(await _repo.GetAsync(userId) ?? new Basket { UserId = userId, Items = new() });
+    public async Task<IActionResult> Get(Guid userId, CancellationToken ct)
+    {
+        var b = await _sender.Send(new GetBasketQuery(userId), ct);
+        return Ok(Map(b));
+    }
 
-    // Thêm/cập nhật item (upsert)
     [HttpPost("{userId:guid}/items")]
-    public async Task<IActionResult> UpsertItem([FromRoute] Guid userId, [FromBody] UpsertItemDto dto)
+    public async Task<IActionResult> UpsertItem(Guid userId, UpsertItemRequest req, CancellationToken ct)
     {
-        if (dto.Quantity <= 0) return BadRequest("Quantity must be > 0");
-        var item = new BasketItem
-        {
-            ProductId = dto.ProductId,
-            Sku = dto.Sku.Trim(),
-            Name = dto.Name.Trim(),
-            UnitPrice = dto.UnitPrice,
-            Quantity = dto.Quantity,
-            Currency = dto.Currency.Trim().ToUpperInvariant()
-        };
-        await _repo.AddOrUpdateItemAsync(userId, item, _ttl);
-        return Ok(await _repo.GetAsync(userId));
+        var b = await _sender.Send(new UpsertItemCommand(
+            userId, req.ProductId, req.Sku, req.Name, req.UnitPrice, req.Quantity, req.Currency, _ttl), ct);
+        return Ok(Map(b));
     }
 
-    // Chỉ cập nhật số lượng
     [HttpPatch("{userId:guid}/items/{productId:guid}")]
-    public async Task<IActionResult> UpdateQty([FromRoute] Guid userId, [FromRoute] Guid productId, [FromBody] UpdateQtyDto dto)
+    public async Task<IActionResult> UpdateQty(Guid userId, Guid productId, UpdateQtyRequest req, CancellationToken ct)
     {
-        if (dto.Quantity <= 0) return BadRequest("Quantity must be > 0");
-
-        var basket = await _repo.GetAsync(userId) ?? new Basket { UserId = userId };
-        var it = basket.Items.FirstOrDefault(x => x.ProductId == productId);
-        if (it is null) return NotFound();
-
-        it.Quantity = dto.Quantity;
-        await _repo.UpsertAsync(basket, _ttl);
-        return Ok(basket);
+        var b = await _sender.Send(new UpdateQtyCommand(userId, productId, req.Quantity, _ttl), ct);
+        return Ok(Map(b));
     }
 
-    // Xoá item
     [HttpDelete("{userId:guid}/items/{productId:guid}")]
-    public async Task<IActionResult> RemoveItem([FromRoute] Guid userId, [FromRoute] Guid productId)
-        => (await _repo.RemoveItemAsync(userId, productId, _ttl)) ? NoContent() : NotFound();
-
-    // Xoá cả giỏ
-    [HttpDelete("{userId:guid}")]
-    public async Task<IActionResult> Clear([FromRoute] Guid userId)
+    public async Task<IActionResult> RemoveItem(Guid userId, Guid productId, CancellationToken ct)
     {
-        await _repo.ClearAsync(userId);
+        try
+        {
+            await _sender.Send(new RemoveItemCommand(userId, productId, _ttl), ct);
+            return NoContent();
+        }
+        catch (KeyNotFoundException) { return NotFound(); }
+    }
+
+    [HttpDelete("{userId:guid}")]
+    public async Task<IActionResult> Clear(Guid userId, CancellationToken ct)
+    {
+        await _sender.Send(new ClearBasketCommand(userId), ct);
         return NoContent();
     }
 
-    // GET /api/Basket/{userId}/enrich
     [HttpGet("{userId:guid}/enrich")]
-    public async Task<IActionResult> GetEnriched([FromRoute] Guid userId, [FromServices] IHttpClientFactory http)
+    public async Task<IActionResult> GetEnriched(Guid userId, CancellationToken ct)
     {
-        var basket = await _repo.GetAsync(userId) ?? new Basket { UserId = userId };
-        if (basket.Items.Count == 0) return Ok(basket);
-
-        var client = http.CreateClient("ProductApi");
-
-        // gọi song song lấy detail theo ProductId
-        var tasks = basket.Items.Select(async it =>
-        {
-            try
-            {
-                var p = await client.GetFromJsonAsync<ProductReadDto>($"/api/Products/{it.ProductId}");
-                if (p is not null)
-                {
-                    it.Sku = string.IsNullOrWhiteSpace(p.sku) ? it.Sku : p.sku;
-                    it.Name = string.IsNullOrWhiteSpace(p.name) ? it.Name : p.name;
-                    // sync giá tham chiếu (tuỳ: có thể khóa khi checkout)
-                    it.UnitPrice = p.price;
-                    it.Currency = p.currency.ToUpperInvariant();
-                }
-            }
-            catch { /* ignore not found/timeouts */ }
-        });
-
-        await Task.WhenAll(tasks);
-        await _repo.UpsertAsync(basket); // lưu lại bản enrich (tùy)
-        return Ok(basket);
+        var b = await _sender.Send(new GetEnrichedBasketQuery(userId), ct);
+        return Ok(Map(b));
     }
 
+    private static BasketResponse Map(BasketService.Domain.Entities.Basket b)
+        => new(b.UserId, b.Items.Select(i =>
+            new BasketItemResponse(i.ProductId, i.Sku, i.Name, i.UnitPrice, i.Quantity, i.Currency)).ToList());
 }

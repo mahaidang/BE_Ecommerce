@@ -3,11 +3,11 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace ProductService.Domain.Entities;
 
-[BsonIgnoreExtraElements] // lỡ có field dư thì bỏ qua
+[BsonIgnoreExtraElements]
 public class Product
 {
     [BsonId]
-    [BsonRepresentation(BsonType.String)]                 // lưu Guid dạng string
+    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [BsonElement("sku")]

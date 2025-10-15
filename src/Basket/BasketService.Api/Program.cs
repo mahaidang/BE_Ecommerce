@@ -1,41 +1,89 @@
+﻿using BasketService.Application.Abstractions.External;
+using BasketService.Application.Features.Baskets.Queries;
+using BasketService.Infrastructure.External;
+using BasketService.Infrastructure.Persistence;
+using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(o =>
+{
+    o.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket API", Version = "v1" });
+});
+
+builder.Services.AddHttpClient("ProductApi", (sp, c) =>
+{
+    var cfg = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = cfg["Services:ProductBaseUrl"]!;
+    c.BaseAddress = new Uri(baseUrl);
+    c.Timeout = TimeSpan.FromSeconds(5);
+});
+
+
+// Redis
+var redisConn = builder.Configuration["Redis:ConnectionString"]!;
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConn));
+
+// Repo
+builder.Services.AddScoped<BasketService.Application.Abstractions.Persistence.IBasketRepository, RedisBasketRepository>();
+
+// Đăng ký MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetBasketHandler>());
+
+builder.Services.AddHttpClient<IProductCatalogClient, ProductCatalogClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:ProductServiceUrl"]);
+});
+
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger(c =>
+    {
+        c.PreSerializeFilters.Add((doc, req) =>
+        {
+            // Detect nếu request đến từ Gateway (qua port 5000)
+            var isViaGateway = req.Host.Port == 5000 ||
+                              req.Headers.ContainsKey("X-Forwarded-Prefix") ||
+                              req.Headers["Referer"].ToString().Contains(":5000");
+
+            if (isViaGateway)
+            {
+                // Force URL qua Gateway
+            doc.Servers = new List<OpenApiServer>
+            {
+                new OpenApiServer
+                {
+                    Url = "http://localhost:5000/api/basket",
+                    Description = "Via Gateway"
+                }
+            };
+            }
+            else
+            {
+                // Chạy trực tiếp service
+                doc.Servers = new List<OpenApiServer>
+                {
+                    new OpenApiServer
+                    {
+                        Url = $"{req.Scheme}://{req.Host.Value}",
+                        Description = "Direct Access"
+                    }
+                };
+            }
+        });
+    });
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapGet("/health", () => Results.Ok("OK"));
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
