@@ -2,6 +2,7 @@
 using OrderingService.Application.Common;
 using OrderingService.Domain.Entities;
 using System.Text.Json;
+using OrchestratorService.Worker.Messaging; // Thêm using này để dùng EventEnvelope, OrderCreatedData, OrderItemData
 
 
 namespace OrderingService.Application.Orders.Command;
@@ -49,25 +50,39 @@ public sealed class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Cre
             });
         }
 
-        await using var tx = await _db.Database.BeginTransactionAsync(ct); // hoặc wrappers
+        await using var tx = await _db.Database.BeginTransactionAsync(ct);
         _db.Orders.Add(order);
 
-        var evt = new
-        {
-            orderId = order.Id,
-            orderNo = order.OrderNo,
-            userId = order.UserId,
-            status = order.Status,
-            currency = order.Currency,
-            grandTotal = order.GrandTotal,
-            items = order.OrderItems.Select(x => new { x.ProductId, x.Sku, x.ProductName, x.UnitPrice, x.Quantity })
-        };
+        // Tạo OrderCreatedData đúng chuẩn
+        var orderCreatedData = new OrderCreatedData(
+            order.UserId,
+            order.Currency,
+            order.GrandTotal ?? 0,
+            order.OrderItems.Select(x =>
+                new OrderItemData(
+                    x.ProductId,
+                    x.Sku,
+                    x.ProductName,
+                    x.Quantity,
+                    x.UnitPrice
+                )
+            ).ToList()
+        );
+
+        // Tạo envelope đúng chuẩn
+        var envelope = new EventEnvelope<OrderCreatedData>(
+            "order.created",
+            Guid.NewGuid(), // hoặc correlationId nếu có
+            order.Id,
+            orderCreatedData,
+            DateTime.UtcNow
+        );
 
         _db.OutboxMessages.Add(new OutboxMessage
         {
             Id = Guid.NewGuid(),
-            EventType = "OrderCreated",
-            Payload = JsonSerializer.Serialize(evt),
+            EventType = "order.created",
+            Payload = JsonSerializer.Serialize(envelope, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }),
             OccurredAtUtc = DateTime.UtcNow
         });
 

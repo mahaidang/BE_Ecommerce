@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Orchestrator\OrchestratorService.Worker\OrchestratorService.Worker\OrchestratorService.Worker.csproj" />
     <ProjectReference Include="..\OrderingService.Domain\OrderingService.Domain.csproj" />
   </ItemGroup>
 

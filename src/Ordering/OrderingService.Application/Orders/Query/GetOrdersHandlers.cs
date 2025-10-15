@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using OrderingService.Application.Common;
-using OrderingService.Domain.Entities;
 
 namespace OrderingService.Application.Orders;
 

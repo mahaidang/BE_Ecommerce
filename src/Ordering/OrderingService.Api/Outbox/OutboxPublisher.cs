@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using OrderingService.Domain.Entities;
 using OrderingService.Infrastructure;
 using RabbitMQ.Client;

@@ -4,9 +4,12 @@ using MediatR;
 
 namespace BasketService.Application.Features.Baskets.Commands.UpsertItem;
 
-public sealed class UpsertItemHandler(IBasketRepository repo)
-    : IRequestHandler<UpsertItemCommand, Basket>
+public sealed class UpsertItemHandler : IRequestHandler<UpsertItemCommand, Basket>
 {
+    private readonly IBasketRepository _repo;
+
+    public UpsertItemHandler(IBasketRepository repo) => _repo = repo;
+
     public async Task<Basket> Handle(UpsertItemCommand c, CancellationToken ct)
     {
         var item = new BasketItem
@@ -19,7 +22,7 @@ public sealed class UpsertItemHandler(IBasketRepository repo)
             Currency = c.Currency.Trim().ToUpperInvariant()
         };
 
-        await repo.AddOrUpdateItemAsync(c.UserId, item, c.Ttl, ct);
-        return await repo.GetAsync(c.UserId, ct) ?? new Basket { UserId = c.UserId, Items = new() };
+        await _repo.AddOrUpdateItemAsync(c.UserId, item, c.Ttl, ct);
+        return await _repo.GetAsync(c.UserId, ct) ?? new Basket { UserId = c.UserId, Items = new() };
     }
 }

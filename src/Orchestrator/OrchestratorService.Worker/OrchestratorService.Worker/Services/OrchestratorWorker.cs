@@ -1,10 +1,8 @@
-﻿using System.Text;
-using System.Text.Json;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using OrchestratorService.Worker.Messaging;
+﻿using OrchestratorService.Worker.Messaging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using System.Text;
+using System.Text.Json;
 
 public sealed class OrchestratorWorker : BackgroundService
 {

@@ -2,28 +2,34 @@
 using BasketService.Application.Features.Baskets.Commands.Delete;
 using BasketService.Application.Features.Baskets.Commands.UpsertItem;
 using BasketService.Application.Features.Baskets.Queries;
-
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class BasketController(ISender sender, IConfiguration cfg) : ControllerBase
+public class BasketController : ControllerBase
 {
-    private readonly TimeSpan _ttl = TimeSpan.FromMinutes(
-        cfg.GetValue<int?>("Redis:DefaultTtlMinutes") ?? 60);
+    private readonly ISender _sender;
+    private readonly TimeSpan _ttl;
+
+    public BasketController(ISender sender, IConfiguration cfg)
+    {
+        _sender = sender;
+        var minutes = cfg.GetValue<int?>("Redis:DefaultTtlMinutes") ?? 60;
+        _ttl = TimeSpan.FromMinutes(minutes);
+    }
 
     [HttpGet("{userId:guid}")]
     public async Task<IActionResult> Get(Guid userId, CancellationToken ct)
     {
-        var b = await sender.Send(new GetBasketQuery(userId), ct);
+        var b = await _sender.Send(new GetBasketQuery(userId), ct);
         return Ok(Map(b));
     }
 
     [HttpPost("{userId:guid}/items")]
     public async Task<IActionResult> UpsertItem(Guid userId, UpsertItemRequest req, CancellationToken ct)
     {
-        var b = await sender.Send(new UpsertItemCommand(
+        var b = await _sender.Send(new UpsertItemCommand(
             userId, req.ProductId, req.Sku, req.Name, req.UnitPrice, req.Quantity, req.Currency, _ttl), ct);
         return Ok(Map(b));
     }
@@ -31,7 +37,7 @@ public class BasketController(ISender sender, IConfiguration cfg) : ControllerBa
     [HttpPatch("{userId:guid}/items/{productId:guid}")]
     public async Task<IActionResult> UpdateQty(Guid userId, Guid productId, UpdateQtyRequest req, CancellationToken ct)
     {
-        var b = await sender.Send(new UpdateQtyCommand(userId, productId, req.Quantity, _ttl), ct);
+        var b = await _sender.Send(new UpdateQtyCommand(userId, productId, req.Quantity, _ttl), ct);
         return Ok(Map(b));
     }
 
@@ -40,7 +46,7 @@ public class BasketController(ISender sender, IConfiguration cfg) : ControllerBa
     {
         try
         {
-            await sender.Send(new RemoveItemCommand(userId, productId, _ttl), ct);
+            await _sender.Send(new RemoveItemCommand(userId, productId, _ttl), ct);
             return NoContent();
         }
         catch (KeyNotFoundException) { return NotFound(); }
@@ -49,14 +55,14 @@ public class BasketController(ISender sender, IConfiguration cfg) : ControllerBa
     [HttpDelete("{userId:guid}")]
     public async Task<IActionResult> Clear(Guid userId, CancellationToken ct)
     {
-        await sender.Send(new ClearBasketCommand(userId), ct);
+        await _sender.Send(new ClearBasketCommand(userId), ct);
         return NoContent();
     }
 
     [HttpGet("{userId:guid}/enrich")]
     public async Task<IActionResult> GetEnriched(Guid userId, CancellationToken ct)
     {
-        var b = await sender.Send(new GetEnrichedBasketQuery(userId), ct);
+        var b = await _sender.Send(new GetEnrichedBasketQuery(userId), ct);
         return Ok(Map(b));
     }
 
