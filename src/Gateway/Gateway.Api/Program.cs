@@ -1,4 +1,9 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using ApiGateway.Api.Middlewares;
+
+var builder = WebApplication.CreateBuilder(args);
+
+//// ========== CONFIGURATION ==========
+//builder.Configuration.AddJsonFile("yarp.json", optional: false, reloadOnChange: true);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -6,8 +11,30 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+// CORS (cho phép FE truy cập)
+builder.Services.AddCors(opt => opt.AddDefaultPolicy(p =>
+    p.WithOrigins("http://localhost:3000", "http://localhost:5173")
+     .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+// Logging providers (Console + Debug)
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.AddDebug();
+});
+
 var app = builder.Build();
 
+// 1️⃣ CORS (phải trước ReverseProxy)
+app.UseCors();
+
+// 2️⃣ Custom middleware
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<RequestLoggingMiddleware>();
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
+// 3️⃣ Swagger UI đa endpoint
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -24,11 +51,16 @@ app.UseSwaggerUI(c =>
     // c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List); // nếu muốn sổ sẵn
 });
 
+// 4️⃣ Reverse proxy
 app.MapReverseProxy();
-app.MapGet("/health", () => Results.Ok("OK"));
+
+// 5️⃣ Health check
+app.MapGet("/health", () => Results.Ok("OK - Gateway"));
+app.MapGet("/", () => Results.Ok("✅ API Gateway running"));
+
 app.Run();
 
-// Class để binding configuration
+// ========== SUPPORT CLASS ==========
 public class SwaggerEndpoint
 {
     public string Name { get; set; } = string.Empty;
