@@ -20,7 +20,7 @@ builder.Services.AddScoped<IInventoryDbContext>(sp => sp.GetRequiredService<Inve
 // RabbitMQ
 builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(_ => new ConnectionFactory
 {
-    HostName = builder.Configuration["RabbitMq:Host"] ?? "localhost",
+    HostName = builder.Configuration["RabbitMq:Host"] ?? "rabbitmq",
     Port = int.Parse(builder.Configuration["RabbitMq:Port"] ?? "5672"),
     UserName = builder.Configuration["RabbitMq:User"] ?? "guest",
     Password = builder.Configuration["RabbitMq:Pass"] ?? "guest",
@@ -33,7 +33,10 @@ builder.Services.AddHostedService<InventorySagaConsumer>();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment()) { app.UseSwagger(); app.UseSwaggerUI(); }
+//if (app.Environment.IsDevelopment()) { 
+    app.UseSwagger(); 
+    app.UseSwaggerUI(); 
+//}
 
 // ⬅️ Map gRPC endpoint
 app.MapGrpcService<InventoryGrpcService>();

@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace InventoryService.Domain.Entities;
+namespace Inventory.Domain.Entities;
 
 public partial class Warehouse
 {

@@ -91,8 +91,8 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger(c =>
     {
         c.PreSerializeFilters.Add((doc, req) =>
@@ -127,7 +127,7 @@ if (app.Environment.IsDevelopment())
     });
 
     app.UseSwaggerUI();
-}
+//}
 
 
 

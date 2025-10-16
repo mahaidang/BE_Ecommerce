@@ -1,0 +1,194 @@
+version: "3.9"
+
+services:
+  # ========== DATABASE ==========
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - ecommerce-net
+
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - ecommerce-net
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - ecommerce-net
+
+  # ========== SERVICES ==========
+  identity:
+    build:
+      context: .
+      dockerfile: src/Identity/Dockerfile
+    container_name: identity
+    ports:
+      - "5101:8080"
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__Default=Server=sqlserver,1433;Database=IdentityDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+    networks:
+      - ecommerce-net
+
+  product:
+    build:
+      context: .
+      dockerfile: src/Product/Dockerfile
+    container_name: product
+    ports:
+      - "5111:8080"
+    depends_on:
+      - mongodb
+    environment:
+      - Mongo__ConnectionString=mongodb://root:123456@mongodb:27017
+    networks:
+      - ecommerce-net
+
+  inventory:
+    build:
+      context: .
+      dockerfile: src/Inventory/Dockerfile
+    container_name: inventory
+    ports:
+      - "5301:8080"
+    depends_on:
+      - sqlserver
+      - rabbitmq
+    environment:
+      - ConnectionStrings__Default=Server=sqlserver,1433;Database=InventoryDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+      # Override cho RabbitMQ
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__User=guest
+      - RabbitMq__Pass=guest
+    networks:
+      - ecommerce-net
+
+  basket:
+    build:
+      context: .
+      dockerfile: src/Basket/Dockerfile
+    container_name: basket
+    ports:
+      - "5120:8080"
+    depends_on:
+      - redis
+      - product
+    environment:
+      - Redis__Host=redis
+      - Product__BaseUrl=http://product:8082
+    networks:
+      - ecommerce-net
+
+  ordering:
+    build:
+      context: .
+      dockerfile: src/Ordering/Dockerfile
+    container_name: ordering
+    ports:
+      - "5401:8080"
+    depends_on:
+      - sqlserver
+      - rabbitmq
+      - inventory
+    environment:
+      - ConnectionStrings__Default=Server=sqlserver,1433;Database=OrderingDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+      - Grpc__InventoryBaseUrl=http://inventory:8083
+      - RabbitMq__Host=rabbitmq
+    networks:
+      - ecommerce-net
+
+  # payment:
+  #   build:
+  #     context: .
+  #     dockerfile: src/Payment/Dockerfile
+  #   container_name: payment
+  #   ports:
+  #     - "8085:8085"
+  #   depends_on:
+  #     - sqlserver
+  #   environment:
+  #     - ConnectionStrings__Default=Server=sqlserver,1433;Database=PaymentDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+  #   networks:
+  #     - ecommerce-net
+
+  report:
+    build:
+      context: .
+      dockerfile: src/Report/Dockerfile
+    container_name: report
+    ports:
+      - "5121:8080"
+    depends_on:
+      - sqlserver
+    environment:
+      - ConnectionStrings__Default=Server=sqlserver,1433;Database=ReportDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
+    networks:
+      - ecommerce-net
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: src/Orchestrator/Dockerfile
+    container_name: orchestrator
+    depends_on:
+      - rabbitmq
+    networks:
+      - ecommerce-net
+
+  gateway:
+    build:
+      context: .
+      dockerfile: src/Gateway/Dockerfile
+    container_name: gateway
+    ports:
+      - "5000:8080"
+    depends_on:
+      - identity
+      - ordering
+      - product
+      - basket
+      # - payment
+      - report
+      - orchestrator
+    networks:
+      - ecommerce-net
+
+# ========== VOLUMES & NETWORK ==========
+volumes:
+  sql_data:
+  mongo_data:
+
+networks:
+  ecommerce-net:
+    driver: bridge

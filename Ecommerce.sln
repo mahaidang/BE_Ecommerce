@@ -22,10 +22,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog.Infrastructure", "src\Catalog\Catalog.Infrastructure\Catalog.Infrastructure.csproj", "{A4313E01-0BE3-43D3-A4C0-1943851A6178}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{6306A8FB-679E-111F-6585-8F70E0EE6013}"
+	ProjectSection(SolutionItems) = preProject
+		src\Gateway\Dockerfile = src\Gateway\Dockerfile
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway.Api", "src\Gateway\Gateway.Api\Gateway.Api.csproj", "{D11CA8A9-B842-490C-92B6-4796B10767DB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{65ABFB5D-2B10-DF64-BF12-C17976F8E5D9}"
+	ProjectSection(SolutionItems) = preProject
+		src\Identity\Dockerfile = src\Identity\Dockerfile
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Api", "src\Identity\Identity.Api\Identity.Api.csproj", "{6EDB0E35-899E-4DC4-8B41-536561C534F1}"
 EndProject
@@ -36,18 +42,27 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Identity.Infrastructure", "src\Identity\Identity.Infrastructure\Identity.Infrastructure.csproj", "{B2E19D90-2679-4BC6-8E13-2B3258152F0B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inventory", "Inventory", "{6646DC9B-45F7-597F-FD98-DC7F277572B1}"
+	ProjectSection(SolutionItems) = preProject
+		src\Inventory\Dockerfile = src\Inventory\Dockerfile
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService.Api", "src\Inventory\Inventory.Api\InventoryService.Api.csproj", "{6C9F0649-C959-476E-A887-0B38FF2F8275}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.Api", "src\Inventory\Inventory.Api\Inventory.Api.csproj", "{6C9F0649-C959-476E-A887-0B38FF2F8275}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService.Application", "src\Inventory\Inventory.Application\InventoryService.Application.csproj", "{B9663D97-A6CD-4234-BD5F-2C159DE22A0F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.Application", "src\Inventory\Inventory.Application\Inventory.Application.csproj", "{B9663D97-A6CD-4234-BD5F-2C159DE22A0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService.Domain", "src\Inventory\Inventory.Domain\InventoryService.Domain.csproj", "{EEA7CA37-B463-4AC5-A18C-D7CCF6EACCB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.Domain", "src\Inventory\Inventory.Domain\Inventory.Domain.csproj", "{EEA7CA37-B463-4AC5-A18C-D7CCF6EACCB9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService.Infrastructure", "src\Inventory\Inventory.Infrastructure\InventoryService.Infrastructure.csproj", "{D4A15D4D-485E-4B94-B119-18064461B897}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventory.Infrastructure", "src\Inventory\Inventory.Infrastructure\Inventory.Infrastructure.csproj", "{D4A15D4D-485E-4B94-B119-18064461B897}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ordering", "Ordering", "{F27B2340-E7BA-3D4E-2BA0-468913BF6518}"
+	ProjectSection(SolutionItems) = preProject
+		src\Ordering\Dockerfile = src\Ordering\Dockerfile
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Payment", "Payment", "{FE9050FB-983E-C37B-EEA3-5C8ABB4CBAF9}"
+	ProjectSection(SolutionItems) = preProject
+		src\Payment\Dockerfile = src\Payment\Dockerfile
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Api", "src\Payment\Payment.Api\Payment.Api.csproj", "{F06518EF-19F1-4004-99AC-471C9F18F831}"
 EndProject
@@ -58,36 +73,65 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Infrastructure", "src\Payment\Payment.Infrastructure\Payment.Infrastructure.csproj", "{7DB59B6F-AB1A-4C19-9014-D67EFB898383}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProductService", "ProductService", "{7EBFC35F-CFB5-33FC-478C-BF5D9C05E6B6}"
+	ProjectSection(SolutionItems) = preProject
+		src\Product\Dockerfile = src\Product\Dockerfile
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Api", "src\Product\ProductService.Api\ProductService.Api.csproj", "{3812EBF2-F6A7-4A80-A988-2C89CC63B5BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Api", "src\Product\Product.Api\Product.Api.csproj", "{3812EBF2-F6A7-4A80-A988-2C89CC63B5BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Domain", "src\Product\Product.Domain\ProductService.Domain.csproj", "{ECCC356F-BF40-4C94-896C-AD57289F9BB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Domain", "src\Product\Product.Domain\Product.Domain.csproj", "{ECCC356F-BF40-4C94-896C-AD57289F9BB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Application", "src\Product\Product.Application\ProductService.Application.csproj", "{CE386499-E3C4-4C17-B329-5E35F137CFF1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Application", "src\Product\Product.Application\Product.Application.csproj", "{CE386499-E3C4-4C17-B329-5E35F137CFF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Infrastructure", "src\Product\Product.Infrastructure\ProductService.Infrastructure.csproj", "{C6AAF215-F2D7-46CA-83E1-EF506C85082A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProductService.Infrastructure", "src\Product\Product.Infrastructure\Product.Infrastructure.csproj", "{C6AAF215-F2D7-46CA-83E1-EF506C85082A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Basket", "Basket", "{98E264BD-0C26-7A02-C8F2-A4D3ED9FA5E1}"
+	ProjectSection(SolutionItems) = preProject
+		src\Basket\Dockerfile = src\Basket\Dockerfile
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketService.Api", "src\Basket\BasketService.Api\BasketService.Api.csproj", "{1587F246-A445-6848-A2A7-CF33120EAB16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Api", "src\Basket\Basket.Api\Basket.Api.csproj", "{1587F246-A445-6848-A2A7-CF33120EAB16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketService.Application", "src\Basket\BasketService.Application\BasketService.Application.csproj", "{F7518568-131B-00CF-4BA1-17FDB757541D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Application", "src\Basket\Basket.Application\Basket.Application.csproj", "{F7518568-131B-00CF-4BA1-17FDB757541D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketService.Domain", "src\Basket\BasketService.Domain\BasketService.Domain.csproj", "{60AD0EEC-623E-AF92-5BE1-2284050671EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Domain", "src\Basket\Basket.Domain\Basket.Domain.csproj", "{60AD0EEC-623E-AF92-5BE1-2284050671EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketService.Infrastructure", "src\Basket\BasketService.Infrastructure\BasketService.Infrastructure.csproj", "{92451DA3-F152-0575-23A0-3E5A85024C19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basket.Infrastructure", "src\Basket\Basket.Infrastructure\Basket.Infrastructure.csproj", "{92451DA3-F152-0575-23A0-3E5A85024C19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderingService.Api", "src\Ordering\OrderingService.Api\OrderingService.Api.csproj", "{0D44676B-7F06-19D8-CB8D-71CE8228271B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Api", "src\Ordering\Ordering.Api\Ordering.Api.csproj", "{0D44676B-7F06-19D8-CB8D-71CE8228271B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderingService.Application", "src\Ordering\OrderingService.Application\OrderingService.Application.csproj", "{F35C648B-2DB3-68BB-3194-FD0F080661C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Application", "src\Ordering\Ordering.Application\Ordering.Application.csproj", "{F35C648B-2DB3-68BB-3194-FD0F080661C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderingService.Domain", "src\Ordering\OrderingService.Domain\OrderingService.Domain.csproj", "{06E8548C-04E6-531C-AC4A-EF6016F96C35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Domain", "src\Ordering\Ordering.Domain\Ordering.Domain.csproj", "{06E8548C-04E6-531C-AC4A-EF6016F96C35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderingService.Infrastructure", "src\Ordering\OrderingService.Infrastructure\OrderingService.Infrastructure.csproj", "{72E47644-8F90-5EB2-FE97-707E96AA19E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ordering.Infrastructure", "src\Ordering\Ordering.Infrastructure\Ordering.Infrastructure.csproj", "{72E47644-8F90-5EB2-FE97-707E96AA19E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orchestrator", "Orchestrator", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		src\Orchestrator\Dockerfile = src\Orchestrator\Dockerfile
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestratorService.Worker", "src\Orchestrator\OrchestratorService.Worker\OrchestratorService.Worker\OrchestratorService.Worker.csproj", "{4276ECAB-4D14-418A-ABE2-A4EF3B3DC9DE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orchestrator.Worker", "src\Orchestrator\Orchestrator.Worker\Orchestrator.Worker.csproj", "{4276ECAB-4D14-418A-ABE2-A4EF3B3DC9DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Report", "Report", "{DCD9B7EC-21B7-478A-BB3C-729827BDD673}"
+	ProjectSection(SolutionItems) = preProject
+		src\Report\Dockerfile = src\Report\Dockerfile
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report.Domain", "src\Report\Report.Domain\Report.Domain.csproj", "{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report.Application", "src\Report\Report.Application\Report.Application.csproj", "{0AC26FC2-A016-4B26-8663-4C880C6E7741}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report.Infrastructure", "src\Report\Report.Infrastructure\Report.Infrastructure.csproj", "{80559A12-E188-4713-8FC9-BC7C2117F7AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report.Api", "src\Report\Report.Api\Report.Api.csproj", "{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.env = .env
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -483,6 +527,54 @@ Global
 		{4276ECAB-4D14-418A-ABE2-A4EF3B3DC9DE}.Release|x64.Build.0 = Release|Any CPU
 		{4276ECAB-4D14-418A-ABE2-A4EF3B3DC9DE}.Release|x86.ActiveCfg = Release|Any CPU
 		{4276ECAB-4D14-418A-ABE2-A4EF3B3DC9DE}.Release|x86.Build.0 = Release|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Debug|x64.Build.0 = Debug|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Debug|x86.Build.0 = Debug|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Release|x64.ActiveCfg = Release|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Release|x64.Build.0 = Release|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Release|x86.ActiveCfg = Release|Any CPU
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E}.Release|x86.Build.0 = Release|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Debug|x64.Build.0 = Debug|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Debug|x86.Build.0 = Debug|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Release|x64.ActiveCfg = Release|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Release|x64.Build.0 = Release|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Release|x86.ActiveCfg = Release|Any CPU
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741}.Release|x86.Build.0 = Release|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Debug|x64.Build.0 = Debug|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Release|x64.ActiveCfg = Release|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Release|x64.Build.0 = Release|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD}.Release|x86.Build.0 = Release|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Debug|x64.Build.0 = Debug|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Debug|x86.Build.0 = Debug|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Release|x64.ActiveCfg = Release|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Release|x64.Build.0 = Release|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Release|x86.ActiveCfg = Release|Any CPU
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -530,6 +622,11 @@ Global
 		{72E47644-8F90-5EB2-FE97-707E96AA19E4} = {F27B2340-E7BA-3D4E-2BA0-468913BF6518}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{4276ECAB-4D14-418A-ABE2-A4EF3B3DC9DE} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DCD9B7EC-21B7-478A-BB3C-729827BDD673} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{25A6764E-DDF0-47C0-88A8-DFC765E82D5E} = {DCD9B7EC-21B7-478A-BB3C-729827BDD673}
+		{0AC26FC2-A016-4B26-8663-4C880C6E7741} = {DCD9B7EC-21B7-478A-BB3C-729827BDD673}
+		{80559A12-E188-4713-8FC9-BC7C2117F7AD} = {DCD9B7EC-21B7-478A-BB3C-729827BDD673}
+		{F11E83E8-ADDB-419E-9EB4-DC5DC9845492} = {DCD9B7EC-21B7-478A-BB3C-729827BDD673}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {60A4B638-3A7D-4D02-94D7-28CC0B3EC137}

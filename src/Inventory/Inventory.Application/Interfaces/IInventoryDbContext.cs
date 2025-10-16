@@ -1,4 +1,4 @@
-﻿using InventoryService.Domain.Entities;
+﻿using Inventory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryService.Application.Interfaces;
