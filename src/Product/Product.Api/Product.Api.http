@@ -1,6 +1,6 @@
-@Product.Api_HostAddress = http://localhost:5009
+@ProductService.Api_HostAddress = http://localhost:5111
 
-GET {{Product.Api_HostAddress}}/weatherforecast/
+GET {{ProductService.Api_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
