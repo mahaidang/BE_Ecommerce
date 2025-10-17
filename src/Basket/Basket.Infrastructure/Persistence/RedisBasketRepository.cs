@@ -19,7 +19,7 @@ public sealed class RedisBasketRepository : IBasketRepository
     public RedisBasketRepository(IConnectionMultiplexer mux)
         => _db = mux.GetDatabase();
 
-    public async Task<Basket?> GetAsync(Guid userId, CancellationToken ct)
+    public async Task<Domain.Entities.Basket?> GetAsync(Guid userId, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
 
@@ -27,10 +27,10 @@ public sealed class RedisBasketRepository : IBasketRepository
         if (value.IsNullOrEmpty) return null;
 
         ct.ThrowIfCancellationRequested();
-        return JsonSerializer.Deserialize<Basket>(value!, JsonOpt);
+        return JsonSerializer.Deserialize<Domain.Entities.Basket>(value!, JsonOpt);
     }
 
-    public async Task UpsertAsync(Basket basket, TimeSpan? ttl, CancellationToken ct)
+    public async Task UpsertAsync(Domain.Entities.Basket basket, TimeSpan? ttl, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
 
@@ -62,7 +62,7 @@ public sealed class RedisBasketRepository : IBasketRepository
     {
         ct.ThrowIfCancellationRequested();
 
-        var basket = await GetAsync(userId, ct) ?? new Basket { UserId = userId, Items = new() };
+        var basket = await GetAsync(userId, ct) ?? new Domain.Entities.Basket { UserId = userId, Items = new() };
 
         var existing = basket.Items.FirstOrDefault(i => i.ProductId == item.ProductId);
         if (existing is null)

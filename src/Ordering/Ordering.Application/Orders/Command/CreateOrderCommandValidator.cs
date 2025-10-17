@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using OrderingService.Application.Common;
-using OrderingService.Application.Orders.Command;
+using Ordering.Application.Common;
+using Ordering.Application.Orders.Command;
 
 public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {

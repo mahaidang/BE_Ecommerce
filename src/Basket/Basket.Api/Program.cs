@@ -1,11 +1,22 @@
-﻿using BasketService.Application.Abstractions.External;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Basket.Application.DependencyInjection;
+using Basket.Infrastructure.DependencyInjection;
 using BasketService.Application.Features.Baskets.Queries;
-using BasketService.Infrastructure.External;
 using BasketService.Infrastructure.Persistence;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
+builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+{
+    containerBuilder.RegisterModule(new ApplicationModule());
+    containerBuilder.RegisterModule(new InfrastructureModule());
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -13,6 +24,7 @@ builder.Services.AddSwaggerGen(o =>
 {
     o.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket API", Version = "v1" });
 });
+
 
 builder.Services.AddHttpClient("ProductApi", (sp, c) =>
 {
@@ -33,10 +45,7 @@ builder.Services.AddScoped<BasketService.Application.Abstractions.Persistence.IB
 // Đăng ký MediatR
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetBasketHandler>());
 
-builder.Services.AddHttpClient<IProductCatalogClient, ProductCatalogClient>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["Services:ProductServiceUrl"]);
-});
+ 
 
 
 var app = builder.Build();

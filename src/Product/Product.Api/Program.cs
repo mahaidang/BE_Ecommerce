@@ -4,7 +4,9 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using ProductService.Application.Abstractions.Persistence;
 using ProductService.Application.Common.Behaviors;
+using ProductService.Application.DependencyInjection;
 using ProductService.Application.Features.Commands.CreateProduct;
+using ProductService.Infrastructure.DependencyInjection;
 using ProductService.Infrastructure.Repositories;
 
 
@@ -14,26 +16,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Mongo config
-var mongoCfg = builder.Configuration.GetSection("Mongo");
-var connStr = mongoCfg.GetValue<string>("ConnectionString")!;
-var dbName = mongoCfg.GetValue<string>("Database")!;
-
-// Mongo DI
-builder.Services.AddSingleton<IMongoClient>(_ => new MongoClient(connStr));
-builder.Services.AddSingleton(sp => sp.GetRequiredService<IMongoClient>().GetDatabase(dbName));
-
-
-// Đăng ký repository
-builder.Services.AddSingleton<IProductRepository, ProductRepository>();
-
-//Mediator
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(CreateProductHandler).Assembly));
-
-builder.Services.AddValidatorsFromAssembly(typeof(CreateProductValidator).Assembly);
-
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+// Gọi module
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 

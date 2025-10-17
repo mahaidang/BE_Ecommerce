@@ -1,12 +1,10 @@
-﻿using FluentValidation;
-using Identity.Application.Abstractions;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Identity.Application.Abstractions.Persistence;
-using Identity.Application.Abstractions.Security;
-using Identity.Application.Common.Behaviors;
+using Identity.Application.DependencyInjection;
 using Identity.Application.Features.Commands.Auth;
-using Identity.Application.Features.Users.Commands.Register;
+using Identity.Infrastructure.DependencyInjection;
 using Identity.Infrastructure.Persistence;
-using Identity.Infrastructure.Security;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +14,13 @@ using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(container =>
+{
+    container.RegisterModule(new ApplicationModule());
+    container.RegisterModule(new InfrastructureModule(builder.Configuration));
+});
 
 builder.Services.AddControllers();
 
@@ -72,20 +77,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-
-builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<IdentityDbContext>());
-
-builder.Services.AddValidatorsFromAssembly(typeof(RegisterValidator).Assembly);
-
-builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
-builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 builder.Services.AddHttpContextAccessor();
 

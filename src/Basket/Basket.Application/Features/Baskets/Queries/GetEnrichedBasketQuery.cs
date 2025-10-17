@@ -3,4 +3,4 @@ using MediatR;
 
 namespace BasketService.Application.Features.Baskets.Queries;
 
-public sealed record GetEnrichedBasketQuery(Guid UserId) : IRequest<Basket>;
+public sealed record GetEnrichedBasketQuery(Guid UserId) : IRequest<Domain.Entities.Basket>;

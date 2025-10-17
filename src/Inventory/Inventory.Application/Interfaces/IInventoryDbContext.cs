@@ -1,7 +1,7 @@
 ﻿using Inventory.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace InventoryService.Application.Interfaces;
+namespace Inventory.Application.Interfaces;
 
 public interface IInventoryDbContext
 {

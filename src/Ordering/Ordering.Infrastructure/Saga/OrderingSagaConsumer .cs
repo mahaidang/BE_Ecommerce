@@ -1,11 +1,15 @@
 ﻿using MediatR;
-using OrderingService.Application.Orders.Command;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Ordering.Application.Orders.Command;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
-namespace OrderingService.Api.Saga;
+namespace Ordering.Infrastructure.Saga;
 
 public sealed class OrderingSagaConsumer : BackgroundService
 {

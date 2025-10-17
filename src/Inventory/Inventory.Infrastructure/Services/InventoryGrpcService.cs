@@ -1,9 +1,9 @@
 ﻿using Grpc.Core;
-using InventoryService.Application.Interfaces;
-using InventoryService.Grpc;
+using Inventory.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using InventoryService.Grpc;
 
-namespace InventoryService.Api.Services;
+namespace Inventory.Infrastructure.Services;
 
 public sealed class InventoryGrpcService : InventoryService.Grpc.Inventory.InventoryBase
 {

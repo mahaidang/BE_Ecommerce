@@ -1,4 +1,4 @@
-﻿namespace OrderingService.Application.Inventory;
+﻿namespace Ordering.Application.Inventory;
 
 public interface IInventoryStockClient
 {
