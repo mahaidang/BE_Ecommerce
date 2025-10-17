@@ -4,6 +4,9 @@ using BasketService.Infrastructure.External;
 using BasketService.Infrastructure.Persistence;
 using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,10 @@ builder.Services.AddSwaggerGen(o =>
 {
     o.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket API", Version = "v1" });
 });
+
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
 
 builder.Services.AddHttpClient("ProductApi", (sp, c) =>
 {
