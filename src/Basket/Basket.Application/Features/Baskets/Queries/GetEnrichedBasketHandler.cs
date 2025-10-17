@@ -1,16 +1,15 @@
 ﻿using BasketService.Application.Abstractions.External;
 using BasketService.Application.Abstractions.Persistence;
-using BasketService.Domain.Entities;
 using MediatR;
 
 namespace BasketService.Application.Features.Baskets.Queries;
 
 public sealed class GetEnrichedBasketHandler(IBasketRepository repo, IProductCatalogClient productClient)
-    : IRequestHandler<GetEnrichedBasketQuery, Basket>
+    : IRequestHandler<GetEnrichedBasketQuery, Domain.Entities.Basket>
 {
-    public async Task<Basket> Handle(GetEnrichedBasketQuery q, CancellationToken ct)
+    public async Task<Domain.Entities.Basket> Handle(GetEnrichedBasketQuery q, CancellationToken ct)
     {
-        var basket = await repo.GetAsync(q.UserId, ct) ?? new Basket { UserId = q.UserId, Items = new() };
+        var basket = await repo.GetAsync(q.UserId, ct) ?? new Domain.Entities.Basket { UserId = q.UserId, Items = new() };
         if (basket.Items.Count == 0) return basket;
 
         // có thể giới hạn song song: SemaphoreSlim(8)

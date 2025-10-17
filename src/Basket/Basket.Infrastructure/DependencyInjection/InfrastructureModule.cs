@@ -2,7 +2,7 @@
 using System.Reflection;
 using Module = Autofac.Module;
 
-namespace BasketService.Infrastructure;
+namespace Basket.Infrastructure.DependencyInjection;
 
 public class InfrastructureModule : Module
 {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using OrderingService.Domain.Entities;
+using Ordering.Domain.Entities;
 
-namespace OrderingService.Application.Common;
+namespace Ordering.Application.Common;
 
 public interface IOrderingDbContext
 {

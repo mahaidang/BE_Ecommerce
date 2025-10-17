@@ -1,7 +1,7 @@
 ﻿using InventoryService.Grpc;
-using OrderingService.Application.Inventory;
+using Ordering.Application.Inventory;
 
-namespace OrderingService.Api.Inventory;
+namespace Ordering.Infrastructure.Inventory;
 
 public sealed class GrpcInventoryStockClient : IInventoryStockClient
 {

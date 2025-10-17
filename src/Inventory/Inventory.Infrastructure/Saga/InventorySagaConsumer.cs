@@ -1,9 +1,12 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
 
-namespace InventoryService.Api.Saga;
+namespace Inventory.Infrastructure.Saga;
 
 public sealed class InventorySagaConsumer : BackgroundService
 {

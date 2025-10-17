@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OrderingService.Application.Common;
-using OrderingService.Application.Orders;
-using OrderingService.Application.Orders.Command;
-using OrderingService.Domain.Entities;
+using Ordering.Application.Common;
+using Ordering.Application.Orders;
+using Ordering.Application.Orders.Command;
+using Ordering.Domain.Entities;
 
-namespace OrderingService.Api.Controllers;
+namespace Ordering.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

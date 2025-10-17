@@ -1,11 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderingService.Domain.Entities;
-using OrderingService.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Ordering.Domain.Entities;
+using Ordering.Infrastructure;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace OrderingService.Api.Outbox;
+namespace Ordering.Infrastructure.Outbox;
 
 public sealed class OutboxPublisher : BackgroundService
 {

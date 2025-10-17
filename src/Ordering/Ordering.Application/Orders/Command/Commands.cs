@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace OrderingService.Application.Orders.Command;
+namespace Ordering.Application.Orders.Command;
 
 public record CreateOrderItemDto(Guid ProductId, string Sku, string ProductName, decimal UnitPrice, int Quantity, string Currency);
 public record CreateOrderCommand(

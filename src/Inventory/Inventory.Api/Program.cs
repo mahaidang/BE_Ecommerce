@@ -1,12 +1,15 @@
-﻿using Inventory.Infrastructure.Models;
-using InventoryService.Api.Services;
-using InventoryService.Application.Interfaces;
-using Microsoft.AspNetCore.Connections;
+﻿using Inventory.Application.Interfaces;
+using Inventory.Infrastructure.Models;
+using Inventory.Infrastructure.Services;
+using InventoryService.Application.DependencyInjection;
+using Inventory.Infrastructure.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using RabbitMQ.Client;
-using InventoryService.Api.Saga;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Load 2 module chính
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -17,19 +20,6 @@ builder.Services.AddDbContext<InventoryDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<IInventoryDbContext>(sp => sp.GetRequiredService<InventoryDbContext>());
 
-// RabbitMQ
-builder.Services.AddSingleton<RabbitMQ.Client.IConnectionFactory>(_ => new ConnectionFactory
-{
-    HostName = builder.Configuration["RabbitMq:Host"] ?? "rabbitmq",
-    Port = int.Parse(builder.Configuration["RabbitMq:Port"] ?? "5672"),
-    UserName = builder.Configuration["RabbitMq:User"] ?? "guest",
-    Password = builder.Configuration["RabbitMq:Pass"] ?? "guest",
-    DispatchConsumersAsync = true
-});
-builder.Services.AddSingleton<IConnection>(sp => sp.GetRequiredService<RabbitMQ.Client.IConnectionFactory>().CreateConnection());
-
-// Worker nhận cmd.inventory.*
-builder.Services.AddHostedService<InventorySagaConsumer>();
 
 var app = builder.Build();
 

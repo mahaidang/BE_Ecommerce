@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace OrderingService.Domain.Entities;
+namespace Ordering.Domain.Entities;
 
 public partial class Order
 {

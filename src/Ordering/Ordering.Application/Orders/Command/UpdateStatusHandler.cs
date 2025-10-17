@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OrderingService.Application.Common;
-using OrderingService.Domain.Entities;
+using Ordering.Application.Common;
+using Ordering.Domain.Entities;
 using System.Text.Json;
 
-namespace OrderingService.Application.Orders.Command;
+namespace Ordering.Application.Orders.Command;
 
 public sealed class UpdateStatusHandler : IRequestHandler<UpdateStatusCommand, bool>
 {

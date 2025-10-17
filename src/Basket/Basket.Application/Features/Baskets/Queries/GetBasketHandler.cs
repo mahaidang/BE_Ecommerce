@@ -4,12 +4,12 @@ using MediatR;
 
 namespace BasketService.Application.Features.Baskets.Queries;
 
-public sealed class GetBasketHandler : IRequestHandler<GetBasketQuery, Basket>
+public sealed class GetBasketHandler : IRequestHandler<GetBasketQuery, Domain.Entities.Basket>
 {
     private readonly IBasketRepository _repo;
 
     public GetBasketHandler(IBasketRepository repo) => _repo = repo;
 
-    public async Task<Basket> Handle(GetBasketQuery q, CancellationToken ct)
-        => await _repo.GetAsync(q.UserId, ct) ?? new Basket { UserId = q.UserId, Items = new() };
+    public async Task<Domain.Entities.Basket> Handle(GetBasketQuery q, CancellationToken ct)
+        => await _repo.GetAsync(q.UserId, ct) ?? new Domain.Entities.Basket { UserId = q.UserId, Items = new() };
 }

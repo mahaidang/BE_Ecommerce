@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OrderingService.Application.Common;
+using Ordering.Application.Common;
 
-namespace OrderingService.Application.Orders;
+namespace Ordering.Application.Orders;
 
 public sealed class GetOrdersByUserHandler : IRequestHandler<GetOrdersByUserQuery, PagedOrdersResult>
 {
