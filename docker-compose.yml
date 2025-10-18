@@ -128,19 +128,6 @@ services:
     networks:
       - ecommerce-net
 
-  # payment:
-  #   build:
-  #     context: .
-  #     dockerfile: src/Payment/Dockerfile
-  #   container_name: payment
-  #   ports:
-  #     - "8085:8085"
-  #   depends_on:
-  #     - sqlserver
-  #   environment:
-  #     - ConnectionStrings__Default=Server=sqlserver,1433;Database=PaymentDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;
-  #   networks:
-  #     - ecommerce-net
 
   report:
     build:
