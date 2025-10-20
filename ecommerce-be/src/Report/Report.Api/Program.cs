@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Report.Application.Abstractions.Persistence;
 using Report.Application.Features.Queries;
 using ReportService.Application;
@@ -23,11 +24,40 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
+app.UseSwagger(c =>
+{
+    c.PreSerializeFilters.Add((doc, req) =>
+    {
+        var isViaGateway = req.Host.Port == 5000 ||
+                           req.Headers.ContainsKey("X-Forwarded-Prefix") ||
+                           req.Headers["Referer"].ToString().Contains(":5000");
+
+        if (isViaGateway)
+        {
+            doc.Servers = new List<OpenApiServer>
+                {
+                    new OpenApiServer
+                    {
+                        Url = "http://localhost:5000/api/report",
+                        Description = "Via Gateway"
+                    }
+                };
+        }
+        else
+        {
+            doc.Servers = new List<OpenApiServer>
+                {
+                    new OpenApiServer
+                    {
+                        Url = $"{req.Scheme}://{req.Host.Value}",
+                        Description = "Direct Access"
+                    }
+                };
+        }
+    });
+});
+
+app.UseSwaggerUI();
 
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok("OK - ReportService"));

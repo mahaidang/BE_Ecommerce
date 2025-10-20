@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Report.Application.Abstractions.Persistence;
 using Report.Application.Features.Dtos;
@@ -24,17 +25,26 @@ public class GetDashboardStatsQueryHandler : IRequestHandler<GetDashboardStatsQu
         var summary = new DashboardSummaryDto
         {
             RevenueByDate = await _db.Database
-                .SqlQueryRaw<RevenueByDateDto>($"EXEC reporting.sp_TotalRevenueByDate {from}, {to}")
-                .ToListAsync(ct),
+            .SqlQueryRaw<RevenueByDateDto>(
+                "EXEC report.sp_TotalRevenueByDate @from, @to",
+                new SqlParameter("@from", from),
+                new SqlParameter("@to", to))
+            .ToListAsync(ct),
+
             RevenueByPaymentProvider = await _db.Database
-                .SqlQueryRaw<RevenueByPaymentProviderDto>($"EXEC reporting.sp_RevenueByPaymentProvider {from}, {to}")
-                .ToListAsync(ct),
+            .SqlQueryRaw<RevenueByPaymentProviderDto>(
+                "EXEC report.sp_RevenueByPaymentProvider @from, @to",
+                new SqlParameter("@from", from),
+                new SqlParameter("@to", to))
+            .ToListAsync(ct),
+
             OrderStatusCounts = await _db.Database
-                .SqlQueryRaw<OrderStatusCountDto>("EXEC reporting.sp_CountOrdersByStatus")
-                .ToListAsync(ct),
+            .SqlQueryRaw<OrderStatusCountDto>("EXEC report.sp_CountOrdersByStatus")
+            .ToListAsync(ct),
+
             PaymentEvents = await _db.Database
-                .SqlQueryRaw<PaymentEventSummaryDto>("EXEC reporting.sp_PaymentEventSummary")
-                .ToListAsync(ct),
+            .SqlQueryRaw<PaymentEventSummaryDto>("EXEC report.sp_PaymentEventSummary")
+            .ToListAsync(ct),
         };
 
         return new List<DashboardSummaryDto> { summary };
