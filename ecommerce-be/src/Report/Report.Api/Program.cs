@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ReportDbContext>(opt =>
 builder.Services.AddScoped<IReportDbContext>(sp => sp.GetRequiredService<ReportDbContext>());
 
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(GetDashboardStatsQuery).Assembly));
+    cfg.RegisterServicesFromAssembly(typeof(GetOrderStatusCountsQuery).Assembly));
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
