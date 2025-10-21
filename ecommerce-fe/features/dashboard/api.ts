@@ -1,6 +1,13 @@
 import api from "@/lib/api";
 
 export const dashboardApi = {
-  getRevenueByDate: async () => (await api.get("api/report/dashboard/revenue-by-date")).data,
-  getPaymentDistribution: async () => (await api.get("api/report/dashboard/payment-distribution")).data,
+  getRevenueByDate: async (from?: string, to?: string) => {
+    const params: Record<string, string> = {};
+    if (from) params.from = from;
+    if (to) params.to = to;
+    return (await api.get("api/report/revenue-by-date", { params })).data;
+  },
+  // getRevenueByPayment: async () => (await api.get("api/report/revenue-by-payment")).data,
+  // getOrderStatusCount: async () => (await api.get("api/report/order-status-count")).data,
+  // getPaymentSummary: async () => (await api.get("api/report/payment-summary")).data,
 };
