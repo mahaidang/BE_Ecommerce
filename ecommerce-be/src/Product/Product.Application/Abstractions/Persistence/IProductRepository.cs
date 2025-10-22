@@ -1,17 +1,17 @@
-﻿using ProductService.Domain.Entities;
+﻿using Product.Domain.Entities;
 
-namespace ProductService.Application.Abstractions.Persistence;
+namespace Product.Application.Abstractions.Persistence;
 
 public interface IProductRepository
 {
-    Task<Product?> GetByIdAsync(Guid id, CancellationToken ct);
-    Task<IEnumerable<Product>> GetAllAsync(CancellationToken ct);
-    Task<IEnumerable<Product>> SearchAsync(string? keyword, CancellationToken ct);
-    Task AddAsync(Product product, CancellationToken ct);
-    Task UpdateAsync(Product product, CancellationToken ct);
+    Task<ProductModel?> GetByIdAsync(Guid id, CancellationToken ct);
+    Task<IEnumerable<ProductModel>> GetAllAsync(CancellationToken ct);
+    Task<IEnumerable<ProductModel>> SearchAsync(string? keyword, CancellationToken ct);
+    Task AddAsync(ProductModel product, CancellationToken ct);
+    Task UpdateAsync(ProductModel product, CancellationToken ct);
     Task DeleteAsync(Guid id, CancellationToken ct);
 
-    Task<(IEnumerable<Product> items, long total)> QueryAsync(
+    Task<(IEnumerable<ProductModel> items, long total)> QueryAsync(
         string? keyword, Guid? categoryId, decimal? minPrice, decimal? maxPrice,
         int page, int pageSize, CancellationToken ct);
 

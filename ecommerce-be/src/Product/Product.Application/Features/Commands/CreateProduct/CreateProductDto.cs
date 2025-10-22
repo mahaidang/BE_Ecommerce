@@ -1,4 +1,4 @@
-﻿namespace ProductService.Application.Features.Commands.CreateProduct;
+﻿namespace Product.Application.Features.Commands.CreateProduct;
 
 public sealed record CreateProductDto
 (

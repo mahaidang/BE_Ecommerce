@@ -1,13 +1,6 @@
-﻿using FluentValidation;
-using MediatR;
-using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
-using ProductService.Application.Abstractions.Persistence;
-using ProductService.Application.Common.Behaviors;
-using ProductService.Application.DependencyInjection;
-using ProductService.Application.Features.Commands.CreateProduct;
-using ProductService.Infrastructure.DependencyInjection;
-using ProductService.Infrastructure.Repositories;
+﻿using Microsoft.OpenApi.Models;
+using Product.Application.DependencyInjection;
+using Product.Infrastructure.DependencyInjection;
 
 
 var builder = WebApplication.CreateBuilder(args);

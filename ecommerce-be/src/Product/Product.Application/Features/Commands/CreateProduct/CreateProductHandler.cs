@@ -1,11 +1,10 @@
 ﻿using MediatR;
 using MongoDB.Driver;
-using ProductService.Application.Abstractions.Persistence;
-using ProductService.Application.Features.Commands.UpdateProduct;
-using ProductService.Domain.Entities;
+using Product.Application.Abstractions.Persistence;
+using Product.Domain.Entities;
 
 
-namespace ProductService.Application.Features.Commands.CreateProduct;
+namespace Product.Application.Features.Commands.CreateProduct;
 
 public class CreateProductHandler : IRequestHandler<CreateProductCommand, CreateProductResult>
 {
@@ -19,7 +18,7 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Create
     public async Task<CreateProductResult> Handle(CreateProductCommand req, CancellationToken ct)
     {
         var dto = req.Dto;
-        var prod = new Product
+        var prod = new ProductModel
         {
             Sku = dto.Sku.Trim(),
             Name = dto.Name.Trim(),

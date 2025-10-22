@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using ProductService.Application.Abstractions.Persistence;
+using Product.Application.Abstractions.Persistence;
 
-namespace ProductService.Application.Features.Commands.DeleteProduct;
+namespace Product.Application.Features.Commands.DeleteProduct;
 
 public sealed class DeleteProductHandler(IProductRepository repo)
     : IRequestHandler<DeleteProductCommand, Unit>

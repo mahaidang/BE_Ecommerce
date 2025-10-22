@@ -2,19 +2,18 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using ProductService.Api.Contracts.CreateProduct;
-using ProductService.Api.Contracts.UpdateProduct;
-using ProductService.Application.Abstractions.Persistence;
-using ProductService.Application.Features.Commands.CreateProduct;
-using ProductService.Application.Features.Commands.DeleteProduct;
-using ProductService.Application.Features.Commands.UpdateProduct;
-using ProductService.Application.Features.Queries.Products;
-using System.Reflection;
+using Product.Api.Contracts.CreateProduct;
+using Product.Api.Contracts.UpdateProduct;
+using Product.Application.Abstractions.Persistence;
+using Product.Application.Features.Commands.CreateProduct;
+using Product.Application.Features.Commands.DeleteProduct;
+using Product.Application.Features.Commands.UpdateProduct;
+using Product.Application.Features.Queries.Products;
 
-namespace ProductService.Api.Controllers;
+namespace Product.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("[controller]")]
 public class ProductsController : ControllerBase
 {
     private readonly IProductRepository _repo;

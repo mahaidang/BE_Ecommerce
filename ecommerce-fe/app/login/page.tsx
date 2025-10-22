@@ -32,12 +32,12 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50">
+    <main className="flex min-h-screen items-center justify-center bg-backgroud-50">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-lg p-8 rounded-xl w-96 space-y-5"
+        className="bg-backgroud shadow-lg p-8 rounded-xl w-96 space-y-5 border-5"
       >
-        <h1 className="text-2xl font-semibold text-center">Đăng nhập</h1>
+        <h1 className="text-2xl font-semibold text-center te">Đăng nhập</h1>
 
         <div>
           <label className="block text-sm mb-1">Username hoặc Email</label>

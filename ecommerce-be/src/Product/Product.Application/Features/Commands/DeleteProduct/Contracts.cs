@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProductService.Application.Features.Commands.DeleteProduct
+namespace Product.Application.Features.Commands.DeleteProduct
 {
     public sealed record DeleteProductCommand(Guid Id) : IRequest<Unit>;
 

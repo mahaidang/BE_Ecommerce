@@ -1,8 +1,8 @@
 using MongoDB.Driver;
-using ProductService.Application.Abstractions.Persistence;
-using ProductService.Domain.Entities;
+using Product.Application.Abstractions.Persistence;
+using Product.Domain.Entities;
 
-namespace ProductService.Infrastructure.Repositories;
+namespace Product.Infrastructure.Repositories;
 
 public class CategoryRepository : ICategoryRepository
 {
@@ -13,18 +13,18 @@ public class CategoryRepository : ICategoryRepository
         _collection = db.GetCollection<Category>("categories");
     }
 
-    public async Task<Category?> GetByIdAsync(Guid id) =>
+    public async Task<Category?> GetByIdAsync(Guid id, CancellationToken ct) =>
         await _collection.Find(c => c.Id == id).FirstOrDefaultAsync();
 
-    public async Task<IEnumerable<Category>> GetAllAsync() =>
+    public async Task<IEnumerable<Category>> GetAllAsync(CancellationToken ct) =>
         await _collection.Find(FilterDefinition<Category>.Empty).ToListAsync();
 
-    public async Task AddAsync(Category category) =>
+    public async Task AddAsync(Category category, CancellationToken ct) =>
         await _collection.InsertOneAsync(category);
 
-    public async Task UpdateAsync(Category category) =>
+    public async Task UpdateAsync(Category category, CancellationToken ct) =>
         await _collection.ReplaceOneAsync(x => x.Id == category.Id, category);
 
-    public async Task DeleteAsync(Guid id) =>
+    public async Task DeleteAsync(Guid id, CancellationToken ct) =>
         await _collection.DeleteOneAsync(x => x.Id == id);
 }
