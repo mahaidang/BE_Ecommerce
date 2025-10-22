@@ -7,6 +7,18 @@ export function useDashboard(from?: string, to?: string) {
     queryFn: () => dashboardApi.getRevenueByDate(from, to),
     enabled: !!from && !!to,
   });
-
-  return { revenueByDate };
+  const revenueByPayment = useQuery({
+    queryKey: ["dashboard", "revenue-by-payment", from, to],  
+    queryFn: () => dashboardApi.getRevenueByPayment(from, to),
+    enabled: !!from && !!to,
+  });
+  const orderStatus = useQuery({
+    queryKey: ["dashboard", "order-status"],
+    queryFn: dashboardApi.getOrderStatusCount,
+  });
+  const paymentSummary = useQuery({
+    queryKey: ["dashboard", "payment-summary"],
+    queryFn: dashboardApi.getPaymentSummary,
+  });
+  return { revenueByDate, revenueByPayment, orderStatus, paymentSummary };
 }
