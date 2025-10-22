@@ -1,4 +1,4 @@
-﻿namespace ProductService.Api.Contracts.UpdateProduct;
+﻿namespace Product.Api.Contracts.UpdateProduct;
 
 // Api/Contracts/Products/UpdateProductResponse.cs
 public sealed record UpdateProductResponse(

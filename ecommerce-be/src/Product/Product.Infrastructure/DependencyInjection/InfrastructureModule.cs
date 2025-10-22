@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using ProductService.Application.Abstractions.Persistence;
-using ProductService.Infrastructure.Repositories;
+using Product.Application.Abstractions.Persistence;
+using Product.Infrastructure.Repositories;
 
-namespace ProductService.Infrastructure.DependencyInjection;
+namespace Product.Infrastructure.DependencyInjection;
 
 public static class InfrastructureModule
 {
@@ -21,6 +21,7 @@ public static class InfrastructureModule
 
         // Repository
         services.AddSingleton<IProductRepository, ProductRepository>();
+        services.AddSingleton<ICategoryRepository, CategoryRepository>();
 
         return services;
     }

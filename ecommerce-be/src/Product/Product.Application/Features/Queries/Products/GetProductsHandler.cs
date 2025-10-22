@@ -1,10 +1,10 @@
 ﻿using Mapster;
 using MediatR;
-using ProductService.Application.Abstractions.Persistence;
+using Product.Application.Abstractions.Persistence;
 using System.Linq.Dynamic.Core;
 
 
-namespace ProductService.Application.Features.Queries.Products;
+namespace Product.Application.Features.Queries.Products;
 
 public class GetProductsHandler : IRequestHandler<GetProductsQuery, PagedResult<ProductDto>>
 {

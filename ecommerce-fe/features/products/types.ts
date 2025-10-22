@@ -1,5 +1,5 @@
 export interface Product {
-  _id: string;
+  id: string;
   sku: string;
   name: string;
   slug: string;
@@ -9,4 +9,11 @@ export interface Product {
   isActive: boolean;
   createdAtUtc: string;
   updatedAtUtc: string | null;
+}
+
+export interface ProductPage {
+  items: Product[];
+  page: number;
+  pageSize: number;
+  total: number;
 }

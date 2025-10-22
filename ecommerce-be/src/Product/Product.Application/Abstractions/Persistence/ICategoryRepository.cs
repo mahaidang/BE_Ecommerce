@@ -1,12 +1,12 @@
-using ProductService.Domain.Entities;
+using Product.Domain.Entities;
 
-namespace ProductService.Application.Abstractions.Persistence;
+namespace Product.Application.Abstractions.Persistence;
 
 public interface ICategoryRepository
 {
-    Task<Category?> GetByIdAsync(Guid id);
-    Task<IEnumerable<Category>> GetAllAsync();
-    Task AddAsync(Category category);
-    Task UpdateAsync(Category category);
-    Task DeleteAsync(Guid id);
+    Task<Category?> GetByIdAsync(Guid id, CancellationToken ct);
+    Task<IEnumerable<Category>> GetAllAsync(CancellationToken ct);
+    Task AddAsync(Category category, CancellationToken ct);
+    Task UpdateAsync(Category category, CancellationToken ct);
+    Task DeleteAsync(Guid id, CancellationToken ct);
 }

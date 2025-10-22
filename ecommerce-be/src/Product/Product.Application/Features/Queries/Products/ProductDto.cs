@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProductService.Application.Features.Queries.Products;
+﻿namespace Product.Application.Features.Queries.Products;
 
 public record ProductDto(
     Guid Id,

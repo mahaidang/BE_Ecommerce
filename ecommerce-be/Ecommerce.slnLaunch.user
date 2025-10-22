@@ -15,7 +15,7 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\Product\\Product.Api\\Product.Api.csproj",
+        "Path": "src\\Product\\Product.Api\\ProductService.Api.csproj",
         "Action": "Start"
       },
       {

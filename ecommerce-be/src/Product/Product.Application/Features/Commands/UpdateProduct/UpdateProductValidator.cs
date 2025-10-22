@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace ProductService.Application.Features.Commands.UpdateProduct;
+namespace Product.Application.Features.Commands.UpdateProduct;
 public class UpdateProductValidator : AbstractValidator<UpdateProductCommand>
 {
     public UpdateProductValidator()

@@ -1,10 +1,10 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace ProductService.Domain.Entities;
+namespace Product.Domain.Entities;
 
 [BsonIgnoreExtraElements]
-public class Product
+public class ProductModel
 {
     [BsonId]
     [BsonRepresentation(BsonType.String)]

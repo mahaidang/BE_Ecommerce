@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using ProductService.Application.Common.Behaviors;
+using Product.Application.Common.Behaviors;
 using System.Reflection;
 
-namespace ProductService.Application.DependencyInjection;
+namespace Product.Application.DependencyInjection;
 
 public static class ApplicationModule
 {
