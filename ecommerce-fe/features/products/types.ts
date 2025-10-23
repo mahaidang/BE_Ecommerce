@@ -17,3 +17,12 @@ export interface ProductPage {
   pageSize: number;
   total: number;
 }
+
+export interface ProductFilter {
+  page?: number;
+  pageSize?: number;
+  keyword?: string;
+  categoryId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}
