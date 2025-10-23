@@ -7,15 +7,7 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\Identity\\Identity.Api\\Identity.Api.csproj",
-        "Action": "Start"
-      },
-      {
         "Path": "src\\Inventory\\Inventory.Api\\Inventory.Api.csproj",
-        "Action": "Start"
-      },
-      {
-        "Path": "src\\Product\\Product.Api\\ProductService.Api.csproj",
         "Action": "Start"
       },
       {
@@ -32,6 +24,14 @@
       },
       {
         "Path": "src\\Orchestrator\\Orchestrator.Worker\\Orchestrator.Worker.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Product\\Product.Api\\Product.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\Identity\\Identity.Api\\Identity.Api.csproj",
         "Action": "Start"
       }
     ]

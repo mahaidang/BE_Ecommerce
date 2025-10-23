@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { productApi } from "./api";
+import { ProductFilter } from "./types";
 
-export function useProducts(page: number, pageSize: number) {
+export function useProducts(filters: ProductFilter) {
   return useQuery({
-    queryKey: ["products", page, pageSize],
-    queryFn: () => productApi.getAll(page, pageSize),
+    queryKey: ["products", filters],
+    queryFn: () => productApi.search(filters),
   });
 }
