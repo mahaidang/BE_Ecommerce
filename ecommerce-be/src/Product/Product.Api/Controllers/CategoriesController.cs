@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Product.Api.Contracts.Category;
 using Product.Application.Abstractions.Persistence;
-using Product.Application.Features.Commands.CreateCategory;
+using Product.Application.Features.Categories.Commands.CreateCategory;
 
 namespace Product.Api.Controllers
 {
