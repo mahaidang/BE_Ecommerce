@@ -6,13 +6,13 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
-[Route("api/v1/[controller]")]
-public class BasketController : ControllerBase
+[Route("[controller]")]
+public class BasketsController : ControllerBase
 {
     private readonly ISender _sender;
     private readonly TimeSpan _ttl;
 
-    public BasketController(ISender sender, IConfiguration cfg)
+    public BasketsController(ISender sender, IConfiguration cfg)
     {
         _sender = sender;
         var minutes = cfg.GetValue<int?>("Redis:DefaultTtlMinutes") ?? 60;

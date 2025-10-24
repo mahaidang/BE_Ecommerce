@@ -7,7 +7,7 @@ using Product.Application.Features.Commands.CreateCategory;
 
 namespace Product.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CategoriesController : ControllerBase
     {

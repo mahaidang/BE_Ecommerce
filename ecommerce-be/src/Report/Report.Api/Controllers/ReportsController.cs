@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ReportService.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class ReportsController : ControllerBase
 {
     private readonly ISender _sender;

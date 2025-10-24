@@ -14,6 +14,7 @@ public sealed class UpdateProductHandler(IProductRepository repo)
         var dto = c.Dto;
         var prod = new ProductModel
         {
+            Id = dto.Id,
             Sku = dto.Sku.Trim(),
             Name = dto.Name.Trim(),
             Slug = dto.Slug.Trim().ToLowerInvariant(),

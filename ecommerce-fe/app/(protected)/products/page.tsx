@@ -16,7 +16,9 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { useRouter, useSearchParams } from "next/navigation";
+import { EditProductDialog } from "@/features/products/components/EditProductDialog";
 import { Input } from "@/components/ui/input";
+import { DeleteProductDialog } from "@/features/products/components/DeleteProductDialog";
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -124,10 +126,11 @@ export default function ProductsPage() {
                         <TableHead>Giá</TableHead>
                         <TableHead>Trạng thái</TableHead>
                         <TableHead>Ngày tạo</TableHead>
+                        <TableHead className="text-right">Hành động</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {products.map((p) => (
+                      {products.map((p: any) => (
                         <TableRow key={p.id}>
                           <TableCell>{p.name}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">{p.sku}</TableCell>
@@ -138,6 +141,10 @@ export default function ProductsPage() {
                             </span>
                           </TableCell>
                           <TableCell className="text-sm">{new Date(p.createdAtUtc).toLocaleDateString("vi-VN")}</TableCell>
+                          <TableCell className="text-right">
+                            <EditProductDialog product={p} />
+                            <DeleteProductDialog productId={p.id} />
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

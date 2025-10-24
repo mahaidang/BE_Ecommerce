@@ -1,14 +1,23 @@
 import api from "@/lib/api";
-import { CreateProductDto, Product, ProductFilter, ProductPage } from "./types";
+import { CreateProductDto, Product, ProductFilter, ProductPage, UpdateProductDto } from "./types";
 
 export const productApi = {
   search: async (filters: ProductFilter): Promise<ProductPage> => {
-    const res = await api.get("api/product/Products", { params: filters });
+    const res = await api.get("api/product/products", { params: filters });
     return res.data;
   },
 
   create: async (dto: CreateProductDto) : Promise<Product> => {
-    const res = await api.post("api/product/Products", dto);
+    const res = await api.post("api/product/products", dto);
+    return res.data;
+  },
+  update: async (dto: UpdateProductDto, etag?: string): Promise<Product> => {
+    const headers = etag ? { "If-Match": etag } : {};
+    const res = await api.put(`api/product/products/${dto.id}`, dto, { headers });
+    return res.data;
+  },
+  delete: async (id: string) : Promise<void> => {
+    const res = await api.delete(`api/product/products/${id}`);
     return res.data;
   },
 };

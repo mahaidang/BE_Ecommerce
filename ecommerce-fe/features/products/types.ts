@@ -36,3 +36,14 @@ export interface CreateProductDto {
   currency: string;
   isActive?: boolean;
 }
+
+export interface UpdateProductDto {
+  id?: string;
+  sku: string;
+  name: string;
+  slug: string;
+  categoryId?: string;
+  price: number;
+  currency: string;
+  isActive?: boolean;
+}
