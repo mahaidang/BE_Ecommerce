@@ -20,4 +20,19 @@ export const productApi = {
     const res = await api.delete(`api/product/products/${id}`);
     return res.data;
   },
+  uploadImage: async (productId: string, file: File, isMain: boolean) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("isMain", String(isMain));
+
+    const res = await api.post(`api/product/products/${productId}/images`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return res.data;
+  },
+
+  deleteImage: async (productId: string, publicId: string) => {
+    await api.delete(`api/product/products/${productId}/images/${publicId}`);
+  },
 };

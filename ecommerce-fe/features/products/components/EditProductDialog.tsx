@@ -7,6 +7,9 @@ import { useState } from "react";
 import { useUpdateProduct } from "../hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Product } from "../types";
+import { ProductImageUpload } from "./ProductImageUpload";
+import { ProductImagesGallery } from "./ProductImagesGallery";
 import {
     Dialog,
     DialogContent,
@@ -29,13 +32,22 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function EditProductDialog({ product }: { product: FormValues }) {
+export function EditProductDialog({ product }: { product: Product }) {
     const [open, setOpen] = useState(false);
     const { mutateAsync, isPending } = useUpdateProduct();
 
     const form = useForm<FormValues>({
         resolver: zodResolver(schema),
-        defaultValues: product,
+        defaultValues: {
+            id: product.id,
+            name: product.name,
+            sku: product.sku,
+            slug: product.slug,
+            price: product.price,
+            currency: product.currency,
+            categoryId: product.categoryId ?? "",
+            isActive: !!product.isActive,
+        },
     });
 
     const onSubmit = async (data: FormValues) => {
@@ -76,6 +88,10 @@ export function EditProductDialog({ product }: { product: FormValues }) {
                             onCheckedChange={(val) => form.setValue("isActive", val)}
                         />
                     </div>
+
+                    <h4 className="text-sm font-semibold mt-4">Ảnh sản phẩm</h4>
+                    <ProductImageUpload product={product} onUploaded={() => form.reset()} />
+                    <ProductImagesGallery product={product} onDeleted={() => form.reset()} />
 
                     <div className="flex justify-end gap-2 pt-2">
                         <Button type="button" variant="outline" onClick={() => setOpen(false)}>
