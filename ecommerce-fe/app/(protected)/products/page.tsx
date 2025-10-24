@@ -1,5 +1,7 @@
 "use client";
 
+import { CreateProductDialog } from "@/features/products/components/CreateProductDialog";
+
 import { useEffect, useState } from "react";
 import { useProducts } from "@/features/products/hooks";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
@@ -14,7 +16,9 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { useRouter, useSearchParams } from "next/navigation";
+import { EditProductDialog } from "@/features/products/components/EditProductDialog";
 import { Input } from "@/components/ui/input";
+import { DeleteProductDialog } from "@/features/products/components/DeleteProductDialog";
 
 export default function ProductsPage() {
   const router = useRouter();
@@ -74,7 +78,7 @@ export default function ProductsPage() {
                   <Button variant="outline" size="sm" onClick={() => { setQuery(""); setMinPrice(""); setMaxPrice(""); setPage(1); }}>
                     Đặt lại
                   </Button>
-                  <Button size="sm">Tạo mới</Button>
+                  <CreateProductDialog />
                 </div>
               </CardAction>
             </CardHeader>
@@ -117,16 +121,41 @@ export default function ProductsPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                        <TableHead>Ảnh</TableHead>
                         <TableHead>Tên</TableHead>
                         <TableHead>SKU</TableHead>
                         <TableHead>Giá</TableHead>
                         <TableHead>Trạng thái</TableHead>
                         <TableHead>Ngày tạo</TableHead>
+                        <TableHead className="text-right">Hành động</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {products.map((p) => (
-                        <TableRow key={p._id}>
+                      {products.map((p: any) => (
+                        <TableRow key={p.id}>
+                          <TableCell className="w-16 p-2">
+                            {(() => {
+                              const src = p.imageUrl || p.image || p.thumbnail || (p.images?.[0]?.url ?? "");
+                              if (src) {
+                                return (
+                                  // plain img used for simplicity; Next/Image can be used if desired
+                                  <img
+                                    src={src}
+                                    alt={p.name || "product"}
+                                    className="h-12 w-12 rounded object-cover border"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).src = "/placeholder.png";
+                                    }}
+                                  />
+                                );
+                              }
+                              return (
+                                <div className="h-12 w-12 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
+                                  No Image
+                                </div>
+                              );
+                            })()}
+                          </TableCell>
                           <TableCell>{p.name}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">{p.sku}</TableCell>
                           <TableCell>{p.price.toLocaleString("vi-VN")} {p.currency}</TableCell>
@@ -136,6 +165,10 @@ export default function ProductsPage() {
                             </span>
                           </TableCell>
                           <TableCell className="text-sm">{new Date(p.createdAtUtc).toLocaleDateString("vi-VN")}</TableCell>
+                          <TableCell className="text-right">
+                            <EditProductDialog product={p} />
+                            <DeleteProductDialog productId={p.id} />
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

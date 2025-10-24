@@ -14,7 +14,7 @@ export function useAuth() {
     }, []);
 
     const login = async (usernameOrEmail: string, password: string) => {
-        const response = await api.post("api/identity/api/v1/auth/login", { usernameOrEmail, password });
+        const response = await api.post("api/identity/auth/login", { usernameOrEmail, password });
         const accessToken = response.data?.token;
         if (accessToken) {
             localStorage.setItem("token", accessToken);

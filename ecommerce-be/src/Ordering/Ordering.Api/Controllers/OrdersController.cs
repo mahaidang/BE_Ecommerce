@@ -1,15 +1,13 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Ordering.Application.Common;
 using Ordering.Application.Orders;
 using Ordering.Application.Orders.Command;
-using Ordering.Domain.Entities;
 
 namespace Ordering.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -8,6 +8,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 // Load 2 module chính
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);

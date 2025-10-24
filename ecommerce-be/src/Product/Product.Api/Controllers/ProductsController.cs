@@ -5,10 +5,12 @@ using MongoDB.Driver;
 using Product.Api.Contracts.CreateProduct;
 using Product.Api.Contracts.UpdateProduct;
 using Product.Application.Abstractions.Persistence;
-using Product.Application.Features.Commands.CreateProduct;
-using Product.Application.Features.Commands.DeleteProduct;
-using Product.Application.Features.Commands.UpdateProduct;
-using Product.Application.Features.Queries.Products;
+using Product.Application.Features.Products.Commands;
+using Product.Application.Features.Products.Commands.CreateProduct;
+using Product.Application.Features.Products.Commands.DeleteProduct;
+using Product.Application.Features.Products.Commands.UpdateProduct;
+using Product.Application.Features.Products.Queries;
+using ProductService.Application.Products.Commands;
 
 namespace Product.Api.Controllers;
 
@@ -90,4 +92,20 @@ public class ProductsController : ControllerBase
             return NotFound();
         }
     }
+
+    [HttpPost("{productId}/images")]
+    public async Task<IActionResult> UploadImage(Guid productId, IFormFile file, [FromQuery] bool isMain, CancellationToken ct)
+    {
+        var cmd = new UploadProductImageCommand(productId, file, isMain);
+        var ok = await _sender.Send(cmd, ct);
+        return ok ? Ok() : NotFound();
+    }
+
+    [HttpDelete("{productId}/images/{publicId}")]
+    public async Task<IActionResult> DeleteImage(Guid productId, string publicId, CancellationToken ct)
+    {
+        var ok = await _sender.Send(new DeleteProductImageCommand(productId, publicId), ct);
+        return ok ? NoContent() : NotFound();
+    }
+
 }

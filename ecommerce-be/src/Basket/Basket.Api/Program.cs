@@ -25,6 +25,8 @@ builder.Services.AddSwaggerGen(o =>
     o.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket API", Version = "v1" });
 });
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 
 builder.Services.AddHttpClient("ProductApi", (sp, c) =>
 {

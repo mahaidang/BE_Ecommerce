@@ -24,6 +24,9 @@ builder.Host.ConfigureContainer<ContainerBuilder>(container =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+
 // OpenAPI + Swagger UI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(o =>

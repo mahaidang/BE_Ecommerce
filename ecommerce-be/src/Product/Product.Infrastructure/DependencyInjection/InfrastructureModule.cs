@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Product.Application.Abstractions.External;
 using Product.Application.Abstractions.Persistence;
+using Product.Infrastructure.Cloudinary;
 using Product.Infrastructure.Repositories;
 
 namespace Product.Infrastructure.DependencyInjection;
@@ -22,6 +25,15 @@ public static class InfrastructureModule
         // Repository
         services.AddSingleton<IProductRepository, ProductRepository>();
         services.AddSingleton<ICategoryRepository, CategoryRepository>();
+
+        services.Configure<CloudinarySettings>(
+            config.GetSection("Cloudinary"));
+
+        services.AddSingleton<ICloudinaryService>(sp =>
+        {
+            var settings = sp.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+            return new CloudinaryService(settings);
+        });
 
         return services;
     }

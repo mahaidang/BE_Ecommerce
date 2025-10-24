@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Identity.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly ISender _sender;

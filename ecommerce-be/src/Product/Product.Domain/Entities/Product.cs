@@ -37,4 +37,8 @@ public class ProductModel
 
     [BsonElement("updatedAtUtc")]
     public DateTime? UpdatedAtUtc { get; set; }
+
+    [BsonElement("images")]
+    public List<ProductImage> Images { get; set; } = new();
+
 }

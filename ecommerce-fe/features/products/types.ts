@@ -1,3 +1,10 @@
+export interface ProductImage {
+  url: string;
+  publicId: string;
+  isMain: boolean;
+  alt?: string;
+}
+
 export interface Product {
   id: string;
   sku: string;
@@ -9,6 +16,7 @@ export interface Product {
   isActive: boolean;
   createdAtUtc: string;
   updatedAtUtc: string | null;
+   images?: ProductImage[];
 }
 
 export interface ProductPage {
@@ -25,4 +33,25 @@ export interface ProductFilter {
   categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
+}
+
+export interface CreateProductDto {
+  sku: string;
+  name: string;
+  slug: string;
+  categoryId?: string;
+  price: number;
+  currency: string;
+  isActive?: boolean;
+}
+
+export interface UpdateProductDto {
+  id?: string;
+  sku: string;
+  name: string;
+  slug: string;
+  categoryId?: string;
+  price: number;
+  currency: string;
+  isActive?: boolean;
 }
