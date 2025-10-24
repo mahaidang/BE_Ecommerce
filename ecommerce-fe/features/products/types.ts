@@ -26,3 +26,13 @@ export interface ProductFilter {
   minPrice?: number;
   maxPrice?: number;
 }
+
+export interface CreateProductDto {
+  sku: string;
+  name: string;
+  slug: string;
+  categoryId?: string;
+  price: number;
+  currency: string;
+  isActive?: boolean;
+}

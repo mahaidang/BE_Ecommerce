@@ -1,5 +1,7 @@
 "use client";
 
+import { CreateProductDialog } from "@/features/products/components/CreateProductDialog";
+
 import { useEffect, useState } from "react";
 import { useProducts } from "@/features/products/hooks";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
@@ -74,7 +76,7 @@ export default function ProductsPage() {
                   <Button variant="outline" size="sm" onClick={() => { setQuery(""); setMinPrice(""); setMaxPrice(""); setPage(1); }}>
                     Đặt lại
                   </Button>
-                  <Button size="sm">Tạo mới</Button>
+                  <CreateProductDialog />
                 </div>
               </CardAction>
             </CardHeader>
@@ -126,7 +128,7 @@ export default function ProductsPage() {
                     </TableHeader>
                     <TableBody>
                       {products.map((p) => (
-                        <TableRow key={p._id}>
+                        <TableRow key={p.id}>
                           <TableCell>{p.name}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">{p.sku}</TableCell>
                           <TableCell>{p.price.toLocaleString("vi-VN")} {p.currency}</TableCell>
