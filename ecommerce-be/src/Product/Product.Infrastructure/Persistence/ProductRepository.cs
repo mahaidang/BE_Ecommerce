@@ -47,9 +47,24 @@ public class ProductRepository : IProductRepository
 
     public async Task UpdateAsync(ProductModel product, CancellationToken ct)
     {
-        product.UpdatedAtUtc = DateTime.UtcNow;
-        var res = await _col.ReplaceOneAsync(x => x.Id == product.Id, product, cancellationToken: ct);
-        if (res.MatchedCount == 0) throw new KeyNotFoundException("Product not found");
+        var update = Builders<ProductModel>.Update
+             .Set(x => x.Sku, product.Sku)
+             .Set(x => x.Name, product.Name)
+             .Set(x => x.Slug, product.Slug)
+             .Set(x => x.CategoryId, product.CategoryId)
+             .Set(x => x.Price, product.Price)
+             .Set(x => x.Currency, product.Currency)
+             .Set(x => x.IsActive, product.IsActive)
+             .Set(x => x.UpdatedAtUtc, DateTime.UtcNow);
+
+        var res = await _col.UpdateOneAsync(
+            x => x.Id == product.Id,
+            update,
+            cancellationToken: ct
+        );
+
+        if (res.MatchedCount == 0)
+            throw new KeyNotFoundException("Product not found");
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken ct)

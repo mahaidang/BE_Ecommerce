@@ -166,7 +166,7 @@ export default function ProductsPage() {
                           </TableCell>
                           <TableCell className="text-sm">{new Date(p.createdAtUtc).toLocaleDateString("vi-VN")}</TableCell>
                           <TableCell className="text-right">
-                            <EditProductDialog product={p} />
+                            <EditProductDialog productId={p.id} />
                             <DeleteProductDialog productId={p.id} />
                           </TableCell>
                         </TableRow>
