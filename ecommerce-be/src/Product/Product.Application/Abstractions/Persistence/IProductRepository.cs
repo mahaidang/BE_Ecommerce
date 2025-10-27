@@ -17,4 +17,8 @@ public interface IProductRepository
 
     Task<bool> ExistsAsync(Guid id, CancellationToken ct);
 
+    Task<IEnumerable<ProductImage>> GetImagesByProductIdAsync(Guid productId, CancellationToken ct);
+
+    Task UpdateImagesAsync(Guid id, ProductImage img, CancellationToken ct);
+
 }

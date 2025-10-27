@@ -92,6 +92,13 @@ public class ProductsController : ControllerBase
             return NotFound();
         }
     }
+    [HttpGet("{productId}/images")]
+    public async Task<IActionResult> ListImage(Guid productId, CancellationToken ct)
+    {
+        var cmd  = new GetImagesByProdIdQuery(productId);
+        var res = await _sender.Send(cmd, ct);
+        return Ok(res);
+    }
 
     [HttpPost("{productId}/images")]
     public async Task<IActionResult> UploadImage(Guid productId, IFormFile file, [FromQuery] bool isMain, CancellationToken ct)

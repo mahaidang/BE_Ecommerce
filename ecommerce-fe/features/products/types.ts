@@ -55,3 +55,12 @@ export interface UpdateProductDto {
   currency: string;
   isActive?: boolean;
 }
+
+export interface ImgDto {
+  url?: string;
+  publicId?: string;
+}
+
+export interface ListImageDto {
+  images?: ImgDto[];
+}

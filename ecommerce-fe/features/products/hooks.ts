@@ -10,6 +10,14 @@ export function useProducts(filters: ProductFilter) {
 
 }
 
+export function useProduct(id?: string) {
+  return useQuery({
+    queryKey: ["product", id],
+    queryFn: () => productApi.detail(id as string),
+    enabled: !!id,
+  });
+}
+
 export function useCreateProduct() {
   const queryClient = useQueryClient();
 
@@ -19,6 +27,17 @@ export function useCreateProduct() {
       // Khi thêm mới thành công → refetch list sản phẩm
       queryClient.invalidateQueries({ queryKey: ["products"] });
     },
+  });
+}
+
+export function useProductImagesList(productId?: string) {
+  return useQuery({
+    queryKey: ["product", productId, "images"],
+    queryFn: async () => {
+      const product = await productApi.images(productId as string);
+      return product.images ?? [];
+    },
+    enabled: !!productId,
   });
 }
 
@@ -78,3 +97,4 @@ export function useDeleteProduct() {
     },
   });
 }
+

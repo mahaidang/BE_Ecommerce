@@ -21,15 +21,24 @@ public class CloudinaryService : ICloudinaryService
         var uploadParams = new ImageUploadParams
         {
             File = new FileDescription(file.FileName, stream),
-            Folder = "ecommerce/products"
+            Folder = "ecommerce/products",
+            UseFilename = true,
+            UniqueFilename = true,
+            Overwrite = false
         };
 
-        var result = await _cloud.UploadAsync(uploadParams);
+        var result = await _cloud.UploadAsync(uploadParams, ct);
+
         if (result.StatusCode != System.Net.HttpStatusCode.OK)
             throw new Exception($"Upload failed: {result.Error?.Message}");
 
-        return (result.SecureUrl.ToString(), result.PublicId);
+        var url = result.SecureUrl?.AbsoluteUri ?? result.Url?.AbsoluteUri;
+        if (string.IsNullOrEmpty(url))
+            throw new Exception("Cloudinary upload did not return a valid URL.");
+
+        return (url, result.PublicId);
     }
+
 
     public async Task<bool> DeleteImageAsync(string publicId, CancellationToken ct)
     {
