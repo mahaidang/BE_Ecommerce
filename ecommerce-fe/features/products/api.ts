@@ -45,4 +45,8 @@ export const productApi = {
   deleteImage: async (productId: string, publicId: string) => {
     await api.delete(`api/product/products/${productId}/images/${publicId}`);
   },
+  setMainImg: async (productId: string, publicId: string) => {
+    const encodedId = encodeURIComponent(publicId);
+    await api.post(`api/product/products/${productId}/images/${encodedId}/main`);
+  }
 };

@@ -20,5 +20,5 @@ public interface IProductRepository
     Task<IEnumerable<ProductImage>> GetImagesByProductIdAsync(Guid productId, CancellationToken ct);
 
     Task UpdateImagesAsync(Guid id, ProductImage img, CancellationToken ct);
-
+    Task<bool> SetMainImageAsync(Guid productId, string imageId, CancellationToken ct);
 }

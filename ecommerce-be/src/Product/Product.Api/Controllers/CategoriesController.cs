@@ -11,11 +11,9 @@ namespace Product.Api.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryRepository _repo;
         private readonly ISender _sender;
         public CategoriesController(ICategoryRepository repo, ISender sender)
         {
-            _repo = repo;
             _sender = sender;
         }
         [HttpPost]

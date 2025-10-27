@@ -18,7 +18,7 @@ public class GetImagesByProdIdHandler : IRequestHandler<GetImagesByProdIdQuery, 
         var images = await _products.GetImagesByProductIdAsync(req.ProductId, ct);
         
         var imageResults = new ImagesResult<ImageResult>(
-            images.Select(img => new ImageResult(img.PublicId, img.Url)).ToList()   
+            images.Select(img => new ImageResult(img.PublicId, img.Url, img.Alt)).ToList()   
         );
         
         return imageResults;

@@ -42,8 +42,7 @@ export function EditProductDialog({ productId }: { productId: string }) {
                     </TabsContent>
 
                     <TabsContent value="images">
-                        <h1>images</h1>
-                        <ProductImagesGrid productId={productId} onClose={() => setOpen(false)} />
+                        <ProductImagesGrid productId={productId} />
 
                     </TabsContent>
                 </Tabs>

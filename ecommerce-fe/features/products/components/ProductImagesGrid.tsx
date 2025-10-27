@@ -1,91 +1,124 @@
-"use client"
+"use client";
 
-import { useProductImagesList } from "../hooks";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { productApi } from "../api";
-import { ProductImage } from "../types";
+import { useState } from "react";
+import { useProductImagesList, useSetMainImg } from "../hooks";
+import { Trash2, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type Props = {
-        productId: string;
-        onClose?: () => void;
+    productId: string;
 };
 
-export function ProductImagesGrid({productId, onClose}: Props) {
-        const { data: images, isLoading } = useProductImagesList(productId);
-        const queryClient = useQueryClient();
+export function ProductImagesGrid({ productId }: Props) {
+    const { data: images, isLoading } = useProductImagesList(productId);
+    const [selected, setSelected] = useState<string[]>([]);
+    const setMainImg = useSetMainImg(productId);
 
-        const deleteMutation = useMutation({
-                mutationFn: (publicId: string) => productApi.deleteImage(productId, publicId),
-                onSuccess: () => {
-                        // refresh product images and product list
-                        queryClient.invalidateQueries({ queryKey: ["product", productId] });
-                        queryClient.invalidateQueries({ queryKey: ["products"] });
-                },
-        });
-
-        const handleDelete = async (img: ProductImage) => {
-                if (!confirm("Xóa ảnh này?")) return;
-                try {
-                        await deleteMutation.mutateAsync(img.publicId);
-                } catch (err) {
-                        // keep simple: alert on error
-                        alert("Xóa ảnh thất bại");
-                }
-        };
-
-        // marking an existing image as main requires a dedicated API endpoint.
-        // If your backend supports it, replace the placeholder below with the proper call.
-        const handleSetMain = (img: ProductImage) => {
-                alert("Chức năng đặt làm ảnh chính chưa được triển khai trên client. Cần endpoint trên backend.");
-        };
-
-        if (isLoading) {
-                return <div className="p-4">Đang tải ảnh...</div>;
-        }
-
-        if (!images || images.length === 0) {
-                return <div className="p-4 text-sm text-muted-foreground">Không có ảnh cho sản phẩm này.</div>;
-        }
-
-        return (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {images.map((img) => (
-                                <div key={img.publicId} className="relative border rounded overflow-hidden">
-                                        <img
-                                                src={img.url}
-                                                alt={img.alt ?? "product image"}
-                                                className="w-full h-36 object-cover"
-                                                onError={(e) => {
-                                                        (e.target as HTMLImageElement).src = "/placeholder.png";
-                                                }}
-                                        />
-
-                                        {img.isMain && (
-                                                <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">Chính</span>
-                                        )}
-
-                                        <div className="absolute right-2 top-2 flex flex-col gap-2">
-                                                {!img.isMain && (
-                                                        <button
-                                                                type="button"
-                                                                onClick={() => handleSetMain(img)}
-                                                                className="bg-white bg-opacity-90 text-sm px-2 py-1 rounded shadow"
-                                                        >
-                                                                Đặt chính
-                                                        </button>
-                                                )}
-
-                                                                                        <button
-                                                                                                type="button"
-                                                                                                onClick={() => handleDelete(img)}
-                                                                                                      disabled={deleteMutation.status === "pending"}
-                                                                                                className="bg-red-600 text-white text-sm px-2 py-1 rounded shadow"
-                                                                                        >
-                                                        Xóa
-                                                </button>
-                                        </div>
-                                </div>
-                        ))}
-                </div>
+    const toggleSelect = (id: string) => {
+        setSelected((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
         );
+    };
+
+    const handleDelete = () => {
+        if (selected.length === 0) return;
+        if (!confirm(`Bạn có chắc muốn xóa ${selected.length} ảnh đã chọn không?`))
+            return;
+        console.log("🗑 Gửi API xóa:", selected);
+        // TODO: Gọi API delete
+        setSelected([]);
+    };
+
+
+    const handleSetMain = () => {
+        if (selected.length !== 1) {
+            alert("Chỉ được chọn 1 ảnh để đặt làm ảnh chính.");
+            return;
+        }
+        setMainImg.mutate(selected[0], {
+            onSuccess: () => setSelected([])
+        });
+    };
+
+    // await setMainImg.mutateAsync(selected[0]);
+
+    if (!images || images.length === 0)
+        return (
+            <div>
+                <button className=" bg-gray-100 dark:bg-gray-800 p-3 rounded-md shadow-sm">Thêm ảnh</button>
+                <div className="p-4 text-sm text-muted-foreground">
+                    Không có ảnh cho sản phẩm này.
+                </div>
+            </div>
+        );
+
+    return (
+        <div className="space-y-4">
+            {/* Toolbar hiển thị khi có ảnh được chọn */}
+
+            <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 p-3 rounded-md shadow-sm">
+                <div className="text-sm text-gray-700 dark:text-gray-200">
+                    <button>Thêm ảnh</button>
+                </div>
+                {selected.length > 0 && (
+                    <div className="flex gap-3">
+                        <button
+                            onClick={handleSetMain}
+                            className="flex items-center gap-1 text-blue-600 hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
+                        >
+                            Đặt ảnh chính
+                        </button>
+                        <button
+                            onClick={handleDelete}
+                            className="flex items-center gap-1 text-red-600 hover:text-red-800 dark:text-red-300 dark:hover:text-red-200"
+                        >
+                            Xóa ảnh
+                        </button>
+                    </div>
+                )}
+
+            </div>
+
+            {/* Grid ảnh */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {images
+                    .filter((i): i is { publicId: string; url: string; alt?: string; isMain?: boolean } => !!i.publicId)
+                    .map((img) => {
+                        const isSelected = selected.includes(img.publicId);
+
+                        return (
+                            <div
+                                key={img.publicId}
+                                className={`relative border rounded overflow-hidden transition cursor-pointer 
+                ${isSelected ? "ring-2 ring-blue-500 dark:ring-blue-400" : "hover:ring-1 hover:ring-gray-300 dark:hover:ring-gray-600"}`}
+                                onClick={() => toggleSelect(img.publicId)}
+                            >
+                                {/* Checkbox góc phải trên */}
+                                <div
+                                    className="absolute top-2 right-2 z-10"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={isSelected}
+                                        onChange={() => toggleSelect(img.publicId)}
+                                        className="w-5 h-5 accent-blue-600 dark:accent-blue-400 cursor-pointer"
+                                    />
+                                </div>
+
+                                {/* Ảnh */}
+                                <img
+                                    src={img.url}
+                                    alt={img.alt ?? "product image"}
+                                    className="w-full h-36 object-cover"
+                                    onError={(e) =>
+                                        ((e.target as HTMLImageElement).src = "/placeholder.png")
+                                    }
+                                />
+                            </div>
+                        );
+                    })}
+            </div>
+        </div>
+    );
 }

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productApi } from "./api";
 import { CreateProductDto, ProductFilter, UpdateProductDto } from "./types";
 
+//Danh sách sản phẩm
 export function useProducts(filters: ProductFilter) {
   return useQuery({
     queryKey: ["products", filters],
@@ -10,6 +11,7 @@ export function useProducts(filters: ProductFilter) {
 
 }
 
+//Chi tiết sản phẩm
 export function useProduct(id?: string) {
   return useQuery({
     queryKey: ["product", id],
@@ -18,6 +20,7 @@ export function useProduct(id?: string) {
   });
 }
 
+//Thêm sản phẩm
 export function useCreateProduct() {
   const queryClient = useQueryClient();
 
@@ -30,6 +33,7 @@ export function useCreateProduct() {
   });
 }
 
+//Danh sách ảnh
 export function useProductImagesList(productId?: string) {
   return useQuery({
     queryKey: ["product", productId, "images"],
@@ -41,6 +45,7 @@ export function useProductImagesList(productId?: string) {
   });
 }
 
+//Cập nhật sản phẩm
 export function useUpdateProduct() {
   const queryClient = useQueryClient();
 
@@ -70,6 +75,7 @@ export function useUpdateProduct() {
   });
 }
 
+//Xóa sản phẩm
 export function useDeleteProduct() {
   const queryClient = useQueryClient();
 
@@ -98,3 +104,15 @@ export function useDeleteProduct() {
   });
 }
 
+// Đặt ảnh chính: trả về mutation nhận publicId
+export function useSetMainImg(productId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (publicId: string) => productApi.setMainImg(productId, publicId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["product", productId] });
+      queryClient.invalidateQueries({ queryKey: ["product", productId, "images"] });
+    },
+  });
+}

@@ -148,4 +148,19 @@ public class ProductRepository : IProductRepository
             throw new KeyNotFoundException("Product not found");
     }
 
+    public async Task<bool> SetMainImageAsync(Guid productId, string imageId, CancellationToken ct)
+    {
+        var pro = await _col.Find(x => x.Id == productId).FirstOrDefaultAsync(ct);
+        if (pro == null) return false;
+        
+        if (!pro.Images.Any(img => img.PublicId == imageId)) return false;
+
+        foreach (var img in pro.Images)
+            img.IsMain = img.PublicId == imageId;
+
+        var product = Builders<ProductModel>.Update.Set(x => x.Images, pro.Images); 
+
+        await _col.UpdateOneAsync(x => x.Id == productId, product, cancellationToken: ct);
+        return true;
+    }
 }

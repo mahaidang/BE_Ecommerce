@@ -59,6 +59,7 @@ export interface UpdateProductDto {
 export interface ImgDto {
   url?: string;
   publicId?: string;
+  alt?: string;
 }
 
 export interface ListImageDto {
