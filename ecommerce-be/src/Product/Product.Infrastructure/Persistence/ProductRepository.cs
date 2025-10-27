@@ -47,6 +47,7 @@ public class ProductRepository : IProductRepository
 
     public async Task UpdateAsync(ProductModel product, CancellationToken ct)
     {
+        // Cập nhật các trường thông tin sản phẩm (không động đến Images)
         var update = Builders<ProductModel>.Update
              .Set(x => x.Sku, product.Sku)
              .Set(x => x.Name, product.Name)
@@ -65,6 +66,17 @@ public class ProductRepository : IProductRepository
 
         if (res.MatchedCount == 0)
             throw new KeyNotFoundException("Product not found");
+
+        // Nếu có ảnh mới, bổ sung vào danh sách ảnh
+        if (product.Images != null && product.Images.Count > 0)
+        {
+            var pushUpdate = Builders<ProductModel>.Update.PushEach(x => x.Images, product.Images);
+            await _col.UpdateOneAsync(
+                x => x.Id == product.Id,
+                pushUpdate,
+                cancellationToken: ct
+            );
+        }
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken ct)
@@ -113,5 +125,42 @@ public class ProductRepository : IProductRepository
     {
         var filter = Builders<ProductModel>.Filter.Eq(p => p.Id, id);
         return await _col.Find(filter).AnyAsync(ct);
+    }
+
+    //Lấy danh sách ảnh theo ProductId
+    public async Task<IEnumerable<ProductImage>> GetImagesByProductIdAsync(Guid productId, CancellationToken ct)
+    {
+        var product = await GetByIdAsync(productId, ct);
+        return product?.Images ?? Enumerable.Empty<ProductImage>();
+    }
+
+    public async Task UpdateImagesAsync(Guid id, ProductImage img, CancellationToken ct)
+    {
+        var update = Builders<ProductModel>.Update.Push(x => x.Images, img);
+
+        var res = await _col.UpdateOneAsync(
+            x => x.Id == id,
+            update,
+            cancellationToken: ct
+        );
+
+        if (res.MatchedCount == 0)
+            throw new KeyNotFoundException("Product not found");
+    }
+
+    public async Task<bool> SetMainImageAsync(Guid productId, string imageId, CancellationToken ct)
+    {
+        var pro = await _col.Find(x => x.Id == productId).FirstOrDefaultAsync(ct);
+        if (pro == null) return false;
+        
+        if (!pro.Images.Any(img => img.PublicId == imageId)) return false;
+
+        foreach (var img in pro.Images)
+            img.IsMain = img.PublicId == imageId;
+
+        var product = Builders<ProductModel>.Update.Set(x => x.Images, pro.Images); 
+
+        await _col.UpdateOneAsync(x => x.Id == productId, product, cancellationToken: ct);
+        return true;
     }
 }

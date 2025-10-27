@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Product } from "../types";
 
 import {
     Dialog,
@@ -14,6 +13,7 @@ import {
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tabs } from "@radix-ui/react-tabs";
 import { ProductForm } from "./ProductForm ";
+import { ProductImagesGrid } from "./ProductImagesGrid";
 
 
 
@@ -38,12 +38,12 @@ export function EditProductDialog({ productId }: { productId: string }) {
                     </TabsList>
 
                     <TabsContent value="info">
-                        <ProductForm productId={productId} />
+                        <ProductForm productId={productId} onClose={() => setOpen(false)} />
                     </TabsContent>
 
                     <TabsContent value="images">
-                        <h1>images</h1>
-                        {/* <ProductImagesGrid productId={productId} /> */}
+                        <ProductImagesGrid productId={productId} />
+
                     </TabsContent>
                 </Tabs>
             </DialogContent>

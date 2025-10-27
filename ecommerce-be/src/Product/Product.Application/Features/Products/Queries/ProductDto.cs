@@ -1,4 +1,6 @@
-﻿namespace Product.Application.Features.Products.Queries;
+﻿using Product.Application.Features.Products.Dtos;
+
+namespace Product.Application.Features.Products.Queries;
 
 public record ProductDto(
     Guid Id,
@@ -10,5 +12,6 @@ public record ProductDto(
     string Currency,
     bool IsActive,
     DateTime CreatedAtUtc,
-    DateTime? UpdatedAtUtc
+    DateTime? UpdatedAtUtc,
+    ProductImageDto? MainImage
 );

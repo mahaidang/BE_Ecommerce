@@ -135,24 +135,16 @@ export default function ProductsPage() {
                         <TableRow key={p.id}>
                           <TableCell className="w-16 p-2">
                             {(() => {
-                              const src = p.imageUrl || p.image || p.thumbnail || (p.images?.[0]?.url ?? "");
-                              if (src) {
-                                return (
-                                  // plain img used for simplicity; Next/Image can be used if desired
-                                  <img
-                                    src={src}
-                                    alt={p.name || "product"}
-                                    className="h-12 w-12 rounded object-cover border"
-                                    onError={(e) => {
-                                      (e.target as HTMLImageElement).src = "/placeholder.png";
-                                    }}
-                                  />
-                                );
-                              }
+                              const src = p.mainImage?.url || "/placeholder.png";
                               return (
-                                <div className="h-12 w-12 rounded bg-muted flex items-center justify-center text-xs text-muted-foreground">
-                                  No Image
-                                </div>
+                                <img
+                                  src={src}
+                                  alt={p.name || "product"}
+                                  className="h-12 w-12 rounded object-cover border"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = "/placeholder.png";
+                                  }}
+                                />
                               );
                             })()}
                           </TableCell>

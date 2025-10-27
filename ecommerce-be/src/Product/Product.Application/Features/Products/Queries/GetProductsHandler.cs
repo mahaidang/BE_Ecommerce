@@ -1,6 +1,7 @@
 ﻿using Mapster;
 using MediatR;
 using Product.Application.Abstractions.Persistence;
+using Product.Application.Features.Products.Dtos;
 using System.Linq.Dynamic.Core;
 
 
@@ -22,8 +23,34 @@ public class GetProductsHandler : IRequestHandler<GetProductsQuery, PagedResult<
             q.Page, q.PageSize, ct);
 
         var dtos = items.Select(p =>
-            p.Adapt<ProductDto>()
-        ).ToList();
+        {
+            var mainImg = p.Images?
+                .FirstOrDefault(i => i.IsMain)
+                ?? p.Images?.FirstOrDefault();
+
+            // 🧩 Tạo record mới ProductDto, truyền mainImg vào tham số cuối
+            return new ProductDto(
+                Id: p.Id,
+                Sku: p.Sku,
+                Name: p.Name,
+                Slug: p.Slug,
+                CategoryId: p.CategoryId,
+                Price: p.Price,
+                Currency: p.Currency,
+                IsActive: p.IsActive,
+                CreatedAtUtc: p.CreatedAtUtc,
+                UpdatedAtUtc: p.UpdatedAtUtc,
+                MainImage: mainImg is null
+                    ? null
+                    : new ProductImageDto
+                    {
+                        Url = mainImg.Url,
+                        PublicId = mainImg.PublicId,
+                        IsMain = mainImg.IsMain,
+                        Alt = mainImg.Alt
+                    }
+            );
+        }).ToList();
 
         return new PagedResult<ProductDto>(dtos, q.Page, q.PageSize, total);
     }

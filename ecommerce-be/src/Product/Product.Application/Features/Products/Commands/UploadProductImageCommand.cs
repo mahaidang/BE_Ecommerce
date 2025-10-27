@@ -22,23 +22,21 @@ public class UploadProductImageHandler : IRequestHandler<UploadProductImageComma
 
     public async Task<bool> Handle(UploadProductImageCommand req, CancellationToken ct)
     {
-        var product = await _products.GetByIdAsync(req.ProductId, ct);
-        if (product is null) return false;
+        var product = await _products.ExistsAsync(req.ProductId, ct);
+        if (!product) return false;
 
         var (url, publicId) = await _cloud.UploadImageAsync(req.File, ct);
 
-        if (req.IsMain)
-            product.Images.ForEach(i => i.IsMain = false);
 
-        product.Images.Add(new ProductImage
+        var img = new ProductImage
         {
             Url = url,
             PublicId = publicId,
             IsMain = req.IsMain,
             Alt = req.File.FileName
-        });
+        };
 
-        await _products.UpdateAsync(product, ct);
+        await _products.UpdateImagesAsync(req.ProductId, img, ct);
         return true;
     }
 }
