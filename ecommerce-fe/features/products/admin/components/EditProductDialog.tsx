@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tabs } from "@radix-ui/react-tabs";
-import { ProductForm } from "./ProductForm ";
-import { ProductImagesGrid } from "./ProductImagesGrid";
+import { ProductForm } from "./ProductForm";
+import { ProductImagesGrid } from "../../shared/components/ProductImagesGrid";
+
 
 
 

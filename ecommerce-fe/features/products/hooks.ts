@@ -20,6 +20,15 @@ export function useProduct(id?: string) {
   });
 }
 
+//Chi tiết sản phẩm
+export function useProductFull(id?: string) {
+  return useQuery({
+    queryKey: ["product", id],
+    queryFn: () => productApi.full(id as string),
+    enabled: !!id,
+  });
+}
+
 //Thêm sản phẩm
 export function useCreateProduct() {
   const queryClient = useQueryClient();
@@ -33,6 +42,8 @@ export function useCreateProduct() {
   });
 }
 
+
+
 //Danh sách ảnh
 export function useProductImagesList(productId?: string) {
   return useQuery({
@@ -42,6 +53,22 @@ export function useProductImagesList(productId?: string) {
       return product.images ?? [];
     },
     enabled: !!productId,
+  });
+}
+
+
+//Thêm ảnh
+export function useUploadProductImage(productId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ file, isMain }: { file: File; isMain: boolean }) =>
+      productApi.uploadImage(productId, file, isMain),
+    onSuccess: () => {
+      // Refetch lại danh sách ảnh và chi tiết sản phẩm
+      queryClient.invalidateQueries({ queryKey: ["product", productId, "images"] });
+      queryClient.invalidateQueries({ queryKey: ["product", productId] });
+    },
   });
 }
 

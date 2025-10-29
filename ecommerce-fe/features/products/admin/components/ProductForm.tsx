@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useProduct, useUpdateProduct } from "../hooks";
+import { useProduct, useUpdateProduct } from "../../hooks";
 
 import { Switch } from "@/components/ui/switch";
 

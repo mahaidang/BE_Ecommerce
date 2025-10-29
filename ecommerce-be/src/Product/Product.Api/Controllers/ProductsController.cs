@@ -8,6 +8,7 @@ using Product.Application.Abstractions.Persistence;
 using Product.Application.Features.Products.Commands.CreateProduct;
 using Product.Application.Features.Products.Commands.DeleteProduct;
 using Product.Application.Features.Products.Commands.UpdateProduct;
+using Product.Application.Features.Products.Dtos;
 using Product.Application.Features.Products.Queries;
 
 namespace Product.Api.Controllers;
@@ -38,6 +39,13 @@ public class ProductsController : ControllerBase
     {
         var p = await _sender.Send(new GetProductByIdQuery(id), ct);
         return p is null ? NotFound() : Ok(p.Adapt<ProductDto>());
+    }
+
+    [HttpGet("{id:guid}/full")]
+    public async Task<IActionResult> GetFull([FromRoute] Guid id, CancellationToken ct)
+    {
+        var p = await _sender.Send(new GetFull(id), ct);
+        return p is null ? NotFound() : Ok(p.Adapt<ProductFullDto>());
     }
 
     //Lấy danh sách sản phẩm

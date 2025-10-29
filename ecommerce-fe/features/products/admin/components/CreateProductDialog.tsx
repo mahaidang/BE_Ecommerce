@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { z } from "zod";
-import { useCreateProduct } from "../hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Dialog,
@@ -13,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
+import { useCreateProduct } from "../../hooks";
 
 
 const schema = z.object({

@@ -13,7 +13,7 @@ import {
   AlertDialogCancel,
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { useDeleteProduct } from "../hooks";
+import { useDeleteProduct } from "../../hooks";
 
 export function DeleteProductDialog({ productId }: { productId: string }) {
   const [open, setOpen] = useState(false);
