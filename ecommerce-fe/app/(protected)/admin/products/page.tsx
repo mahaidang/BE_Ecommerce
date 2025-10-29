@@ -1,24 +1,25 @@
 "use client";
 
-import { CreateProductDialog } from "@/features/products/components/CreateProductDialog";
 
-import { useEffect, useState } from "react";
-import { useProducts } from "@/features/products/hooks";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardAction } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Card, CardAction, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
+import { CreateProductDialog } from "@/features/products/admin/components/CreateProductDialog";
+import { DeleteProductDialog } from "@/features/products/admin/components/DeleteProductDialog";
+import { EditProductDialog } from "@/features/products/admin/components/EditProductDialog";
+
+import { useProducts } from "@/features/products/hooks";
 import { useRouter, useSearchParams } from "next/navigation";
-import { EditProductDialog } from "@/features/products/components/EditProductDialog";
-import { Input } from "@/components/ui/input";
-import { DeleteProductDialog } from "@/features/products/components/DeleteProductDialog";
+import { useEffect, useState } from "react";
 
 export default function ProductsPage() {
   const router = useRouter();

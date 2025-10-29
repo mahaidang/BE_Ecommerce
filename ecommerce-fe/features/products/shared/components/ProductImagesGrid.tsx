@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useProductImagesList, useSetMainImg } from "../hooks";
-import { Trash2, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useProductImagesList, useSetMainImg } from "../../hooks";
+import { ProductImageUpload } from "./ProductImageUpload";
 
 type Props = {
     productId: string;
@@ -45,7 +44,7 @@ export function ProductImagesGrid({ productId }: Props) {
     if (!images || images.length === 0)
         return (
             <div>
-                <button className=" bg-gray-100 dark:bg-gray-800 p-3 rounded-md shadow-sm">Thêm ảnh</button>
+                <ProductImageUpload productId={productId} onUploaded={() => {}} />
                 <div className="p-4 text-sm text-muted-foreground">
                     Không có ảnh cho sản phẩm này.
                 </div>
@@ -57,9 +56,8 @@ export function ProductImagesGrid({ productId }: Props) {
             {/* Toolbar hiển thị khi có ảnh được chọn */}
 
             <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 p-3 rounded-md shadow-sm">
-                <div className="text-sm text-gray-700 dark:text-gray-200">
-                    <button>Thêm ảnh</button>
-                </div>
+                <ProductImageUpload productId={productId} onUploaded={() => {}} />
+
                 {selected.length > 0 && (
                     <div className="flex gap-3">
                         <button
