@@ -15,7 +15,7 @@ public class BasketsController : ControllerBase
     public BasketsController(ISender sender, IConfiguration cfg)
     {
         _sender = sender;
-        var minutes = cfg.GetValue<int?>("Redis:DefaultTtlMinutes") ?? 60;
+        var minutes = cfg.GetValue<int?>("Redis:DefaultTtlMinutes") ?? 4320;
         _ttl = TimeSpan.FromMinutes(minutes);
     }
 
@@ -23,7 +23,7 @@ public class BasketsController : ControllerBase
     public async Task<IActionResult> Get(Guid userId, CancellationToken ct)
     {
         var b = await _sender.Send(new GetBasketQuery(userId), ct);
-        return Ok(Map(b));
+        return Ok(b);
     }
 
     [HttpPost("{userId:guid}/items")]
@@ -68,5 +68,5 @@ public class BasketsController : ControllerBase
 
     private static BasketResponse Map(BasketService.Domain.Entities.Basket b)
         => new(b.UserId, b.Items.Select(i =>
-            new BasketItemResponse(i.ProductId, i.Sku, i.Name, i.UnitPrice, i.Quantity, i.Currency)).ToList());
+            new BasketItemResponse(i.ProductId, i.Quantity)).ToList());
 }

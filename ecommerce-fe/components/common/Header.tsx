@@ -1,13 +1,14 @@
 "use client";
 
+
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { useAuth } from "@/features/auth/useAuth";
 
 export default function Header() {
+  // Header này chỉ dùng cho admin, đã có AdminHeader và CustomerHeader riêng cho từng role
   const { logout } = useAuth();
   const { theme, setTheme } = useTheme();
-
   return (
     <header className="flex items-center justify-between px-4 py-3 border-b bg-background sticky top-0 z-10">
       <h1 className="text-lg font-semibold">Ecommerce Admin</h1>
@@ -24,7 +25,7 @@ export default function Header() {
         >
           Logout
         </button>
-      </div>
+      </div>  
     </header>
   );
 }

@@ -15,11 +15,7 @@ public sealed class UpsertItemHandler : IRequestHandler<UpsertItemCommand, Domai
         var item = new BasketItem
         {
             ProductId = c.ProductId,
-            Sku = c.Sku.Trim(),
-            Name = c.Name.Trim(),
-            UnitPrice = c.UnitPrice,
             Quantity = c.Quantity,
-            Currency = c.Currency.Trim().ToUpperInvariant()
         };
 
         await _repo.AddOrUpdateItemAsync(c.UserId, item, c.Ttl, ct);

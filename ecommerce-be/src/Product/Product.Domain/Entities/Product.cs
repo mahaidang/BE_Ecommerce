@@ -29,6 +29,12 @@ public class ProductModel
     [BsonElement("currency")]
     public string Currency { get; set; } = "VND";
 
+    [BsonElement("description")]
+    public string? Description { get; set; }
+
+    [BsonElement("variants")]
+    public List<string> Variants { get; set; } = new();
+
     [BsonElement("isActive")]
     public bool IsActive { get; set; } = true;
 
@@ -41,4 +47,5 @@ public class ProductModel
     [BsonElement("images")]
     public List<ProductImage> Images { get; set; } = new();
 
+    
 }

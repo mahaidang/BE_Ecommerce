@@ -26,6 +26,8 @@ public class CreateProductHandler : IRequestHandler<CreateProductCommand, Create
             CategoryId = dto.CategoryId,
             Price = dto.Price,
             Currency = dto.Currency.Trim().ToUpperInvariant(),
+            Description = dto.Description.Trim(),
+            Variants = dto.Variants,
             IsActive = dto.IsActive
         };
 
