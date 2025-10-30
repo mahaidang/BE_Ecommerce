@@ -8,6 +8,8 @@ public record ProductFullDto(
     Guid? CategoryId,
     decimal Price,
     string Currency,
+    string Description,
+    List<string> Variants,
     bool IsActive,
     DateTime CreatedAtUtc,
     DateTime? UpdatedAtUtc,

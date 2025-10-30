@@ -1,11 +1,12 @@
 "use client";
 
-import Header from "@/components/common/Header";
-import { BackButton } from "@/components/ui/BackButton";
+import CustomerHeader from "@/features/common/CustomerHeader";
+import Footer from "@/features/common/CustomerFooter";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import CustomerFooter from "@/features/common/CustomerFooter";
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+export default function CustomerProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
 
@@ -24,9 +25,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* <Sidebar /> */}
       <div className="flex-1 flex flex-col">
+        <CustomerHeader />
         <main className="flex-1 p-5">{children}</main>
+        <CustomerFooter/>
       </div>
     </div>
   );

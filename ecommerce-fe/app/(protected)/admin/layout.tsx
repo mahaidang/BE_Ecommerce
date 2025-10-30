@@ -1,11 +1,10 @@
 "use client";
 
-import Header from "@/components/common/Header";
-import { BackButton } from "@/components/ui/BackButton";
+import AdminHeader from "@/features/common/AdminHeader";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
+export default function AdminProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
 
@@ -24,8 +23,8 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* <Sidebar /> */}
       <div className="flex-1 flex flex-col">
+        <AdminHeader />
         <main className="flex-1 p-5">{children}</main>
       </div>
     </div>

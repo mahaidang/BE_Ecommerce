@@ -13,6 +13,8 @@ export interface Product {
   categoryId: string;
   price: number;
   currency: string;
+  description: string;
+  variants: string[];
   isActive: boolean;
   createdAtUtc: string;
   updatedAtUtc: string | null;

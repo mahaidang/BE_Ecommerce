@@ -71,11 +71,7 @@ public sealed class RedisBasketRepository : IBasketRepository
         }
         else
         {
-            existing.Sku = item.Sku;
-            existing.Name = item.Name;
-            existing.UnitPrice = item.UnitPrice;
             existing.Quantity = item.Quantity;
-            existing.Currency = item.Currency;
         }
 
         await UpsertAsync(basket, ttl, ct);

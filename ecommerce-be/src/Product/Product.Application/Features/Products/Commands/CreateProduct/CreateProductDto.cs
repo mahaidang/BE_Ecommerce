@@ -7,6 +7,8 @@ public sealed record CreateProductDto
     string Slug,
     Guid? CategoryId,
     decimal Price,
+    string Description,
+    List<string> Variants,
     string Currency = "VND",    
     bool IsActive = true
 );
