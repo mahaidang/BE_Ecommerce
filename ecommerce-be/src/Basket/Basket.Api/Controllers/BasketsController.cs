@@ -19,6 +19,7 @@ public class BasketsController : ControllerBase
         _ttl = TimeSpan.FromMinutes(minutes);
     }
 
+    //get by id
     [HttpGet("{userId:guid}")]
     public async Task<IActionResult> Get(Guid userId, CancellationToken ct)
     {
@@ -26,6 +27,7 @@ public class BasketsController : ControllerBase
         return Ok(b);
     }
 
+    //post items
     [HttpPost("{userId:guid}/items")]
     public async Task<IActionResult> UpsertItem(Guid userId, UpsertItemRequest req, CancellationToken ct)
     {
@@ -34,6 +36,7 @@ public class BasketsController : ControllerBase
         return Ok(Map(b));
     }
 
+    //edit
     [HttpPatch("{userId:guid}/items/{productId:guid}")]
     public async Task<IActionResult> UpdateQty(Guid userId, Guid productId, UpdateQtyRequest req, CancellationToken ct)
     {
@@ -41,6 +44,7 @@ public class BasketsController : ControllerBase
         return Ok(Map(b));
     }
 
+    //delete product
     [HttpDelete("{userId:guid}/items/{productId:guid}")]
     public async Task<IActionResult> RemoveItem(Guid userId, Guid productId, CancellationToken ct)
     {
@@ -52,6 +56,7 @@ public class BasketsController : ControllerBase
         catch (KeyNotFoundException) { return NotFound(); }
     }
 
+    //delete products
     [HttpDelete("{userId:guid}")]
     public async Task<IActionResult> Clear(Guid userId, CancellationToken ct)
     {
